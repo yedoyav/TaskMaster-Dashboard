@@ -1,7 +1,8 @@
+
 import KpiCard from './KpiCard';
 import CriticalKpiCard from './CriticalKpiCard';
 import {
-  ClipboardList, ListTodo, Clock3, Loader2, CheckCircle2, CalendarCheck2, AlertOctagon, ShieldAlert, Users, TrendingUp
+  ClipboardList, ListTodo, Clock3, Loader2, CheckCircle2, CalendarCheck2, AlertOctagon, ShieldAlert, Users, TrendingUp, CalendarClock
 } from 'lucide-react';
 import type { KpiValues } from '@/lib/kpi-utils';
 
@@ -16,7 +17,7 @@ export default function KpiDashboard({ kpiData, onCriticalCardClick }: KpiDashbo
   return (
     <div className="space-y-6">
       {/* Main KPI Cards - Now a single responsive grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         <KpiCard 
           title="Total de Tarefas" 
           value={kpiData.totalTasks} 
@@ -63,6 +64,15 @@ export default function KpiDashboard({ kpiData, onCriticalCardClick }: KpiDashbo
           iconColorClass="text-status-green"
           valueColorClass="text-status-green"
           borderColorClass="border-status-green"
+        />
+        <KpiCard
+          title="Tempo Cliente Ativo"
+          value={kpiData.clientActiveTime}
+          icon={CalendarClock}
+          iconColorClass="text-yav-cyan"
+          valueColorClass="text-yav-cyan"
+          borderColorClass="border-yav-cyan"
+          description="Desde a 1ª tarefa"
         />
 
         {/* Critical KPIs integrated into the same grid but styled differently */}
