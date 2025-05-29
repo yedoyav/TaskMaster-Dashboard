@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -16,7 +17,7 @@ import { ArrowUpDown, Search } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import type { Task } from '@/lib/constants';
 import { formatDateToDdMmYyyy } from '@/lib/utils';
-import { getStatusColor, getPriorityColorClass } from '@/lib/constants';
+import { getStatusColor, getPriorityColorClass, getPriorityLabel } from '@/lib/constants';
 
 interface TasksTableProps {
   tasks: Task[];
@@ -35,9 +36,11 @@ export default function TasksTable({ tasks }: TasksTableProps) {
   const filteredAndSortedTasks = useMemo(() => {
     let filtered = tasks.filter(task => {
       const searchTermLower = searchTerm.toLowerCase();
+      // Include priority label in search
+      const priorityLabel = getPriorityLabel(task.Prioridade).toLowerCase();
       return Object.values(task).some(value =>
         String(value).toLowerCase().includes(searchTermLower)
-      );
+      ) || priorityLabel.includes(searchTermLower);
     });
 
     if (sortKey) {
@@ -81,7 +84,7 @@ export default function TasksTable({ tasks }: TasksTableProps) {
       <div className="flex items-center">
         {children}
         {sortKey === columnKey && (
-          <ArrowUpDown className={`ml-2 h-3 w-3 ${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
+          <ArrowUpDown className={`ml-2 h-3 w-3 ${sortDirection === 'asc' ? 'transform rotate-180 text-accent' : 'text-accent'}`} />
         )}
       </div>
     </TableHead>
@@ -106,12 +109,12 @@ export default function TasksTable({ tasks }: TasksTableProps) {
         </div>
         <div className="flex items-center space-x-2 text-sm">
           <span className="text-muted-foreground">Linhas por página:</span>
-          <Select value={String(itemsPerPage)} onValueChange={(value) => setItemsPerPage(Number(value))}>
+          <Select value={String(itemsPerPage)} onValueChange={(value) => { setItemsPerPage(Number(value)); setCurrentPage(1); }}>
             <SelectTrigger className="w-[70px] h-9 text-xs">
               <SelectValue placeholder={itemsPerPage} />
             </SelectTrigger>
             <SelectContent>
-              {[5, 10, 25, 50].map(val => (
+              {[5, 10, 25, 50, 100].map(val => (
                 <SelectItem key={val} value={String(val)} className="text-xs">{val}</SelectItem>
               ))}
             </SelectContent>
@@ -138,7 +141,7 @@ export default function TasksTable({ tasks }: TasksTableProps) {
               paginatedTasks.map((task) => (
                 <TableRow key={task['ID da tarefa']}>
                   <TableCell className="text-xs">{task['ID da tarefa']}</TableCell>
-                  <TableCell className="text-xs max-w-xs truncate">{task['Tarefa'] || 'N/D'}</TableCell>
+                  <TableCell className="text-xs max-w-xs truncate" title={task['Tarefa'] || 'N/D'}>{task['Tarefa'] || 'N/D'}</TableCell>
                   <TableCell className="text-xs">{task['Estratégia'] || 'N/D'}</TableCell>
                   <TableCell className="text-xs">{task['Responsável'] || 'N/D'}</TableCell>
                   <TableCell className="text-xs">
@@ -147,8 +150,8 @@ export default function TasksTable({ tasks }: TasksTableProps) {
                       {task.Status || "N/D"}
                     </span>
                   </TableCell>
-                  <TableCell className={`text-xs font-medium ${getPriorityColorClass(task.Prioridade)}`}>
-                    {task.Prioridade === 1 ? 'Alta' : task.Prioridade === 2 ? 'Média' : task.Prioridade === 3 ? 'Baixa' : 'N/D'}
+                  <TableCell className={`text-xs ${getPriorityColorClass(task.Prioridade)}`}>
+                    {getPriorityLabel(task.Prioridade)}
                   </TableCell>
                   <TableCell className="text-xs">{formatDateToDdMmYyyy(task['Data de criação'])}</TableCell>
                   <TableCell className="text-xs">{formatDateToDdMmYyyy(task['Prazo'])}</TableCell>
@@ -160,13 +163,13 @@ export default function TasksTable({ tasks }: TasksTableProps) {
             ) : (
               <TableRow>
                 <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
-                  Nenhuma tarefa encontrada com os filtros atuais.
+                  Nenhuma tarefa encontrada com os filtros atuais ou para o termo buscado.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
-          {paginatedTasks.length > 0 && (
-             <TableCaption>
+          {filteredAndSortedTasks.length > 0 && (
+             <TableCaption className="mt-2">
                Página {currentPage} de {totalPages}. Total de {filteredAndSortedTasks.length} tarefas.
              </TableCaption>
           )}

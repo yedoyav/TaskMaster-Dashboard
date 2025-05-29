@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { SidebarTrigger, SidebarInset, Sidebar, SidebarContent } from '@/components/ui/sidebar'; // Using the custom sidebar from ui
+import { SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Loader2, LayoutGrid, Filter, AlertCircle, FileWarning } from 'lucide-react';
+import { Loader2, Filter, FileWarning } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 import CsvImport from '@/components/dashboard/CsvImport';
@@ -15,6 +16,7 @@ import WeeklyConclusionTrendChart from '@/components/dashboard/WeeklyConclusionT
 import ProgressList from '@/components/dashboard/ProgressList';
 import TasksTable from '@/components/dashboard/TasksTable';
 import CriticalTaskModal from '@/components/dashboard/CriticalTaskModal';
+import PriorityDistributionChart from '@/components/dashboard/PriorityDistributionChart'; // Novo
 
 import type { Task } from '@/lib/constants';
 import { calculateKpiValues, type KpiValues } from '@/lib/kpi-utils';
@@ -23,13 +25,14 @@ import {
   processEtapaDistributionData, 
   processWeeklyTrendData, 
   processProgressListData,
+  processPriorityDistributionData, // Novo
   type OverallStatusProcessedData,
   type EtapaDistributionChartData,
   type WeeklyTrendChartData,
-  type ProgressListItem
+  type ProgressListItem,
+  type PriorityDistributionChartData // Novo
 } from '@/lib/chart-utils';
 import type { DateRange } from 'react-day-picker';
-
 
 const initialFiltersState: FiltersState = {
   dateRange: undefined,
@@ -53,6 +56,7 @@ export default function DashboardPage() {
   const [kpiData, setKpiData] = useState<KpiValues>(calculateKpiValues([]));
   const [overallStatusChartData, setOverallStatusChartData] = useState<OverallStatusProcessedData>(processOverallStatusData([]));
   const [etapaDistributionChartData, setEtapaDistributionChartData] = useState<EtapaDistributionChartData>(processEtapaDistributionData([]));
+  const [priorityDistributionChartData, setPriorityDistributionChartData] = useState<PriorityDistributionChartData>(processPriorityDistributionData([])); // Novo
   const [weeklyTrendChartData, setWeeklyTrendChartData] = useState<WeeklyTrendChartData>(processWeeklyTrendData([]));
   const [progressByResponsibleData, setProgressByResponsibleData] = useState<ProgressListItem[]>([]);
   const [progressByStrategyData, setProgressByStrategyData] = useState<ProgressListItem[]>([]);
@@ -67,52 +71,44 @@ export default function DashboardPage() {
     setIsLoadingFilters(true);
     setCurrentFilters(filtersToApply);
 
-    // Simulate async filtering if needed, or directly filter
     setTimeout(() => {
       let tempFilteredTasks = [...allTasks];
 
-      // Date Range Filter (Data de criação)
       if (filtersToApply.dateRange?.from && allTasks.length > 0) {
         tempFilteredTasks = tempFilteredTasks.filter(task => {
           if (!task['Data de criação']) return false;
           const taskDate = new Date(task['Data de criação']);
-          taskDate.setHours(0,0,0,0); // Normalize task date
+          taskDate.setHours(0,0,0,0);
           
           const fromDate = new Date(filtersToApply.dateRange!.from!);
-          fromDate.setHours(0,0,0,0); // Normalize fromDate
+          fromDate.setHours(0,0,0,0);
 
-          if (!filtersToApply.dateRange!.to) { // Single date
+          if (!filtersToApply.dateRange!.to) {
             return taskDate.getTime() === fromDate.getTime();
           }
           
           const toDate = new Date(filtersToApply.dateRange!.to);
-          toDate.setHours(23,59,59,999); // Normalize toDate to end of day
+          toDate.setHours(23,59,59,999);
 
           return taskDate >= fromDate && taskDate <= toDate;
         });
       }
       
-      // Responsible
       if (filtersToApply.responsibles.length > 0) {
         tempFilteredTasks = tempFilteredTasks.filter(task => filtersToApply.responsibles.includes(task['Responsável'] || ''));
       }
-      // Status
       if (filtersToApply.statuses.length > 0) {
         tempFilteredTasks = tempFilteredTasks.filter(task => filtersToApply.statuses.includes(task.Status || ''));
       }
-      // Strategy
       if (filtersToApply.strategies.length > 0) {
         tempFilteredTasks = tempFilteredTasks.filter(task => filtersToApply.strategies.includes(task['Estratégia'] || ''));
       }
-      // Priority
       if (filtersToApply.priorities.length > 0) {
         tempFilteredTasks = tempFilteredTasks.filter(task => filtersToApply.priorities.includes(String(task.Prioridade)));
       }
-      // Paused
       if (filtersToApply.paused !== 'all') {
         tempFilteredTasks = tempFilteredTasks.filter(task => (String(task.Pausada).toLowerCase() === filtersToApply.paused));
       }
-      // Waiting on Someone
       if (filtersToApply.waitingOnSomeone !== 'all') {
         tempFilteredTasks = tempFilteredTasks.filter(task => {
           return (filtersToApply.waitingOnSomeone === 'yes' && task.ComPendenciaExternaCalculado) ||
@@ -123,33 +119,32 @@ export default function DashboardPage() {
       setFilteredTasks(tempFilteredTasks);
       setIsLoadingFilters(false);
       toast({ title: "Filtros Aplicados", description: `${tempFilteredTasks.length} tarefas encontradas.` });
-    }, 100); // Small delay to show loading state
+    }, 100);
   }, [allTasks, toast]);
 
-
   useEffect(() => {
-    // Update all derived data when filteredTasks changes
     setKpiData(calculateKpiValues(filteredTasks));
     setOverallStatusChartData(processOverallStatusData(filteredTasks));
     setEtapaDistributionChartData(processEtapaDistributionData(filteredTasks));
-    // Weekly trend should ideally use allTasks or a less filtered set if it's about overall project trend
-    setWeeklyTrendChartData(processWeeklyTrendData(allTasks)); 
+    setPriorityDistributionChartData(processPriorityDistributionData(filteredTasks)); // Novo
     setProgressByResponsibleData(processProgressListData(filteredTasks, 'Responsável'));
     setProgressByStrategyData(processProgressListData(filteredTasks, 'Estratégia'));
+    
+    // Weekly trend should ideally use allTasks or a less filtered set if it's about overall project trend
+    setWeeklyTrendChartData(processWeeklyTrendData(allTasks)); 
   }, [filteredTasks, allTasks]);
-
 
   const handleDataLoaded = (data: Task[], fileName: string) => {
     setAllTasks(data);
-    setFilteredTasks(data); // Initially, filtered tasks are all tasks
+    setFilteredTasks(data);
     setCsvFileName(fileName);
-    setCurrentFilters(initialFiltersState); // Reset filters on new file load
+    setCurrentFilters(initialFiltersState);
     toast({ title: "CSV Carregado", description: `${data.length} tarefas importadas de ${fileName}.` });
   };
   
   const handleClearFilters = () => {
     setCurrentFilters(initialFiltersState);
-    setFilteredTasks([...allTasks]); // Reset to all tasks
+    setFilteredTasks([...allTasks]);
     toast({ title: "Filtros Limpos", description: "Exibindo todas as tarefas." });
   };
 
@@ -230,6 +225,10 @@ export default function DashboardPage() {
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <OverallStatusGaugeChart data={overallStatusChartData} />
+                <PriorityDistributionChart data={priorityDistributionChartData} /> 
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-1 gap-8"> {/* Etapa agora ocupa a linha inteira */}
                 <EtapaDistributionChart data={etapaDistributionChartData} />
               </div>
 

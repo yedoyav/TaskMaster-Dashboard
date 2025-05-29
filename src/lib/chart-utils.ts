@@ -1,5 +1,6 @@
+
 import type { Task } from './constants';
-import { STATUS_COLORS, DEFAULT_DECIMAL_PLACES, getStatusColor } from './constants';
+import { STATUS_COLORS, DEFAULT_DECIMAL_PLACES, getStatusColor, getPriorityLabel, getPriorityChartColor } from './constants';
 import { formatHoursToFriendlyString, formatWeekIdentifierToDateDisplay } from './utils';
 import type { ChartConfig } from '@/components/ui/chart';
 
@@ -16,7 +17,7 @@ export interface OverallStatusChartData {
     cutout?: string;
     hoverOffset?: number;
   }[];
-  labels?: string[]; // Optional top-level labels for doughnut if needed
+  labels?: string[];
 }
 
 export interface OverallStatusSummaryItem {
@@ -61,29 +62,28 @@ export function processOverallStatusData(tasks: Task[]): OverallStatusProcessedD
     gaugeSegmentsColors.push(getStatusColor('Pendente'));
     gaugeSegmentLabels.push('Pendentes');
   }
-  if (delayedCount > 0) { // Only add if there are delayed tasks
+  if (delayedCount > 0) {
     gaugeSegmentsData.push(delayedCount);
     gaugeSegmentsColors.push(getStatusColor('Atrasada'));
     gaugeSegmentLabels.push('Atrasadas');
   }
   
-  if (gaugeSegmentsData.length === 0 && tasks.length > 0) { // if all tasks are e.g. 'Descontinuada'
+  if (gaugeSegmentsData.length === 0 && tasks.length > 0) {
     gaugeSegmentsData.push(tasks.length);
     gaugeSegmentsColors.push(getStatusColor('default'));
     gaugeSegmentLabels.push('Outro Status');
   } else if (gaugeSegmentsData.length === 0 && tasks.length === 0) {
-     gaugeSegmentsData.push(1); // Placeholder for empty chart
+     gaugeSegmentsData.push(1); 
      gaugeSegmentsColors.push(getStatusColor('default'));
      gaugeSegmentLabels.push('N/D');
   }
-
 
   const chartData: OverallStatusChartData = {
     datasets: [{
       data: gaugeSegmentsData,
       backgroundColor: gaugeSegmentsColors,
       labels: gaugeSegmentLabels,
-      borderColor: 'hsl(var(--card))', // Match card background for distinct segments
+      borderColor: 'hsl(var(--card))',
       borderWidth: 2,
       circumference: 270,
       rotation: -135,
@@ -135,35 +135,6 @@ export function processEtapaDistributionData(tasks: Task[]): EtapaDistributionCh
     }]
   };
 }
-export const etapaChartConfig = {
-  type: "bar",
-  options: {
-    indexAxis: 'y',
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      title: { display: false },
-      tooltip: {
-        callbacks: {
-          label: (context) => `${context.dataset.label || ''}: ${context.parsed.x}`
-        }
-      }
-    },
-    scales: {
-      x: { 
-        ticks: { 
-          stepSize: 1, 
-          precision: 0,
-          callback: function(value) { if (Number.isInteger(value)) { return value; } },
-        },
-        grid: { drawOnChartArea: false }
-      },
-      y: { grid: { drawOnChartArea: true, color: 'hsl(var(--border)/0.5)' } }
-    }
-  }
-} as const;
-
 
 // Weekly Conclusion Trend (Line Chart)
 export interface WeeklyTrendChartData {
@@ -172,7 +143,7 @@ export interface WeeklyTrendChartData {
     label: string;
     data: number[];
     borderColor: string;
-    backgroundColor: string; // For area fill
+    backgroundColor: string;
     fill: boolean;
     tension: number;
     pointRadius?: number;
@@ -190,6 +161,18 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
   });
 
   const sortedWeeks = Array.from(allWeeksSet).sort();
+  
+  // If no weeks, return empty data structure for chart
+  if (sortedWeeks.length === 0) {
+    return {
+      labels: [],
+      datasets: [
+        { label: 'Concluídas (Acum.)', data: [], borderColor: 'hsl(var(--chart-2))', backgroundColor: 'hsla(var(--chart-2)/0.1)', fill: true, tension: 0.3 },
+        { label: 'Não Concluídas (Acum.)', data: [], borderColor: 'hsl(var(--chart-1))', backgroundColor: 'hsla(var(--chart-1)/0.1)', fill: true, tension: 0.3 }
+      ]
+    };
+  }
+  
   const formattedLabels = sortedWeeks.map(weekId => formatWeekIdentifierToDateDisplay(weekId));
 
   sortedWeeks.forEach(week => {
@@ -208,7 +191,7 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
   let accumulatedCreated = 0;
   let accumulatedCompleted = 0;
   const completedTrend: number[] = [];
-  const activeTrend: number[] = []; // Represents (Created - Completed)
+  const activeTrend: number[] = [];
 
   sortedWeeks.forEach(week => {
     accumulatedCreated += (weeklyData[week]?.created_this_week || 0);
@@ -223,7 +206,7 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
       {
         label: 'Concluídas (Acum.)',
         data: completedTrend,
-        borderColor: 'hsl(var(--chart-2))', // Green like
+        borderColor: 'hsl(var(--chart-2))',
         backgroundColor: 'hsla(var(--chart-2)/0.1)',
         fill: true,
         tension: 0.3,
@@ -233,7 +216,7 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
       {
         label: 'Não Concluídas (Acum.)',
         data: activeTrend,
-        borderColor: 'hsl(var(--chart-1))', // Violet like
+        borderColor: 'hsl(var(--chart-1))',
         backgroundColor: 'hsla(var(--chart-1)/0.1)',
         fill: true,
         tension: 0.3,
@@ -243,38 +226,6 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
     ]
   };
 }
-export const weeklyTrendChartConfig = {
-  type: "line",
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top' },
-      title: { display: false },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
-      },
-    },
-    scales: {
-      y: { 
-        beginAtZero: true, 
-        ticks: { 
-          precision: 0,
-          callback: function(value) { if (Number.isInteger(value)) { return value; } },
-        },
-        grid: { color: 'hsl(var(--border)/0.5)'}
-      },
-      x: { grid: { drawOnChartArea: false } }
-    },
-    interaction: {
-      mode: 'nearest',
-      axis: 'x',
-      intersect: false
-    }
-  }
-} as const;
-
 
 // Progress List Data
 export interface ProgressListItem {
@@ -309,16 +260,79 @@ export function processProgressListData(tasks: Task[], groupField: keyof Task): 
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+// Priority Distribution (Pie Chart)
+export interface PriorityDistributionChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string[];
+    borderColor?: string;
+    borderWidth?: number;
+    hoverOffset?: number;
+  }[];
+}
+
+export function processPriorityDistributionData(tasks: Task[]): PriorityDistributionChartData {
+  const priorityCounts: Record<string, number> = { 'Alta': 0, 'Média': 0, 'Baixa': 0, 'N/D': 0 };
+
+  tasks.forEach(task => {
+    const priorityLabel = getPriorityLabel(task.Prioridade);
+    priorityCounts[priorityLabel]++;
+  });
+
+  const labels = Object.keys(priorityCounts).filter(label => priorityCounts[label] > 0);
+  const data = labels.map(label => priorityCounts[label]);
+  const backgroundColors = labels.map(label => getPriorityChartColor(label));
+
+  if (labels.length === 0 && tasks.length > 0) { // All tasks have undefined priority leading to N/D, but N/D count is 0
+    return {
+      labels: ['Nenhuma prioridade definida'],
+      datasets: [{
+        label: 'Tarefas',
+        data: [tasks.length],
+        backgroundColor: [getPriorityChartColor('N/D')],
+        borderColor: 'hsl(var(--card))',
+        borderWidth: 1,
+        hoverOffset: 4,
+      }]
+    };
+  }
+  if (labels.length === 0 && tasks.length === 0) {
+    return {
+      labels: ['N/D'],
+      datasets: [{
+        label: 'Tarefas',
+        data: [1], // Placeholder for empty chart
+        backgroundColor: [getPriorityChartColor('N/D')],
+      }]
+    };
+  }
+
+
+  return {
+    labels,
+    datasets: [{
+      label: 'Tarefas',
+      data,
+      backgroundColor: backgroundColors,
+      borderColor: 'hsl(var(--card))',
+      borderWidth: 2,
+      hoverOffset: 4,
+    }]
+  };
+}
+
 
 // Chart configurations to be used with ShadCN Chart components
-export const barChartConfig = {
-  desktop: {
-    label: "Total",
-    color: "hsl(var(--chart-1))",
+export const barChartConfig = { // For EtapaDistributionChart
+  tasks: { // Corresponds to dataKey in BarChart
+    label: "Nº de Tarefas",
+    color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig;
 
-export const lineChartConfig = {
+export const lineChartConfig = { // For WeeklyConclusionTrendChart
   completed: {
     label: "Concluídas (Acum.)",
     color: "hsl(var(--chart-2))",
@@ -329,12 +343,14 @@ export const lineChartConfig = {
   },
 } satisfies ChartConfig;
 
-export const doughnutChartConfig = (labels: string[], colors: string[]): ChartConfig => {
+export const priorityPieChartConfig = (labels: string[], colors: string[]): ChartConfig => {
   const config: ChartConfig = {};
   labels.forEach((label, index) => {
-    config[label.toLowerCase().replace(/\s+/g, '_')] = { // create a key from label
+    // Create a key from label suitable for CSS variable or object key
+    const key = label.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    config[key || `item-${index}`] = {
       label: label,
-      color: colors[index] || 'hsl(var(--chart-1))', // fallback color
+      color: colors[index] || 'hsl(var(--chart-1))',
     };
   });
   return config;
