@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -161,7 +162,7 @@ export default function FiltersSidebar({ allTasks, onApplyFilters, onClearFilter
   const priorityOptions = getUniqueValues(allTasks, 'Prioridade').map(val => ({ value: val, label: val }));
 
   return (
-    <Sidebar variant="sidebar" collapsible="icon" className="border-r print:hidden w-full md:w-80 xl:w-96">
+    <Sidebar variant="sidebar" collapsible="icon" className="border-r print:hidden">
       <SidebarHeader>
         <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
           Filtros
@@ -288,3 +289,4 @@ export default function FiltersSidebar({ allTasks, onApplyFilters, onClearFilter
     </Sidebar>
   );
 }
+
