@@ -1,7 +1,7 @@
 
 "use client";
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import type { WeeklyTrendChartData } from '@/lib/chart-utils';
@@ -34,7 +34,7 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
         {chartAvailable ? (
           <ChartContainer config={lineChartConfig} className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 20 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border)/0.3)" />
                 <XAxis 
                   dataKey="name" 
@@ -69,17 +69,17 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
                 />
                 <defs>
                   <linearGradient id="fillCompletedTrend" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-completed)" stopOpacity={0.6}/>
+                    <stop offset="5%" stopColor="var(--color-completed)" stopOpacity={0.5}/>
                     <stop offset="95%" stopColor="var(--color-completed)" stopOpacity={0.05}/>
                   </linearGradient>
                   <linearGradient id="fillActiveTrend" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-active)" stopOpacity={0.6}/>
+                    <stop offset="5%" stopColor="var(--color-active)" stopOpacity={0.5}/>
                     <stop offset="95%" stopColor="var(--color-active)" stopOpacity={0.05}/>
                   </linearGradient>
                 </defs>
-                <Area type="monotone" dataKey="completed" stroke="var(--color-completed)" fill="url(#fillCompletedTrend)" strokeWidth={2.5} dot={{ r:3, fill: 'var(--color-completed)'}} activeDot={{r:6, strokeWidth: 2, stroke: 'hsl(var(--background))'}} />
-                <Area type="monotone" dataKey="active" stroke="var(--color-active)" fill="url(#fillActiveTrend)" strokeWidth={2.5} dot={{ r:3, fill: 'var(--color-active)'}} activeDot={{r:6, strokeWidth: 2, stroke: 'hsl(var(--background))'}}/>
-              </LineChart>
+                <Area type="monotone" dataKey="completed" stroke="var(--color-completed)" fill="url(#fillCompletedTrend)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-completed)'}} activeDot={{r:6, strokeWidth: 1, stroke: 'hsl(var(--background))'}} />
+                <Area type="monotone" dataKey="active" stroke="var(--color-active)" fill="url(#fillActiveTrend)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-active)'}} activeDot={{r:6, strokeWidth: 1, stroke: 'hsl(var(--background))'}}/>
+              </AreaChart>
             </ResponsiveContainer>
           </ChartContainer>
         ) : (
@@ -98,3 +98,4 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
     </Card>
   );
 }
+

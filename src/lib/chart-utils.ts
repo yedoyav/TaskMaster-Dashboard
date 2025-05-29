@@ -167,8 +167,8 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
     return {
       labels: [],
       datasets: [
-        { label: 'Concluídas (Acum.)', data: [], borderColor: 'hsl(var(--chart-2))', backgroundColor: 'hsla(var(--chart-2)/0.1)', fill: true, tension: 0.3 },
-        { label: 'Não Concluídas (Acum.)', data: [], borderColor: 'hsl(var(--chart-1))', backgroundColor: 'hsla(var(--chart-1)/0.1)', fill: true, tension: 0.3 }
+        { label: 'Concluídas (Acum.)', data: [], borderColor: 'hsl(145 46% 50%)', backgroundColor: 'hsla(145 46% 50%/0.1)', fill: true, tension: 0.3 },
+        { label: 'Não Concluídas (Acum.)', data: [], borderColor: 'hsl(var(--primary))', backgroundColor: 'hsla(var(--primary)/0.1)', fill: true, tension: 0.3 }
       ]
     };
   }
@@ -206,22 +206,22 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
       {
         label: 'Concluídas (Acum.)',
         data: completedTrend,
-        borderColor: 'hsl(var(--chart-2))',
-        backgroundColor: 'hsla(var(--chart-2)/0.1)',
+        borderColor: 'hsl(145 46% 50%)', // Green
+        backgroundColor: 'hsla(145 46% 50% / 0.1)', // Light Green fill
         fill: true,
         tension: 0.3,
         pointRadius: 2,
-        pointBackgroundColor: 'hsl(var(--chart-2))',
+        pointBackgroundColor: 'hsl(145 46% 50%)',
       },
       {
         label: 'Não Concluídas (Acum.)',
         data: activeTrend,
-        borderColor: 'hsl(var(--chart-1))',
-        backgroundColor: 'hsla(var(--chart-1)/0.1)',
+        borderColor: 'hsl(var(--primary))', // Purple
+        backgroundColor: 'hsla(var(--primary) / 0.1)', // Light Purple fill
         fill: true,
         tension: 0.3,
         pointRadius: 2,
-        pointBackgroundColor: 'hsl(var(--chart-1))',
+        pointBackgroundColor: 'hsl(var(--primary))',
       }
     ]
   };
@@ -335,11 +335,11 @@ export const barChartConfig = { // For EtapaDistributionChart
 export const lineChartConfig = { // For WeeklyConclusionTrendChart
   completed: {
     label: "Concluídas (Acum.)",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(145 46% 50%)", // Green (matches status-green #48BB78)
   },
-  active: {
+  active: { // "active" here means "Não Concluídas (Acum.)"
     label: "Não Concluídas (Acum.)",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(var(--primary))", // Deep Purple
   },
 } satisfies ChartConfig;
 
@@ -355,3 +355,4 @@ export const priorityPieChartConfig = (labels: string[], colors: string[]): Char
   });
   return config;
 };
+
