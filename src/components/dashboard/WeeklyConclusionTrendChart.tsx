@@ -2,10 +2,11 @@
 "use client";
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import type { WeeklyTrendChartData } from '@/lib/chart-utils';
 import { lineChartConfig } from '@/lib/chart-utils';
+import { TrendingUp } from 'lucide-react';
 
 interface WeeklyConclusionTrendChartProps {
   data: WeeklyTrendChartData;
@@ -18,26 +19,28 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
     active: data.datasets[1].data[index] || 0,
   }));
 
-  const chartAvailable = chartData.length > 0 && (chartData.some(d => d.completed > 0) || chartData.some(d => d.active > 0));
+  const chartAvailable = chartData.length > 1 && (chartData.some(d => d.completed > 0) || chartData.some(d => d.active > 0));
+  const hasSomeData = chartData.length > 0 && (chartData.some(d => d.completed > 0) || chartData.some(d => d.active > 0));
   
   return (
-    <Card className="shadow-yav-xl border border-border/20">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold border-b border-border/50 pb-3 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+    <Card className="flex flex-col shadow-yav-lg border border-border/30 h-full">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-semibold text-foreground">
           Tendência Semanal
         </CardTitle>
+        <CardDescription className="text-xs">Evolução de tarefas concluídas vs. não concluídas.</CardDescription>
       </CardHeader>
-      <CardContent className="bg-card-foreground/5 p-5 rounded-lg shadow-inner border border-border/30 min-h-[350px]">
+      <CardContent className="flex-grow bg-card-foreground/5 p-4 rounded-b-lg min-h-[300px] sm:min-h-[350px]">
         {chartAvailable ? (
-          <ChartContainer config={lineChartConfig} className="h-[350px] w-full">
+          <ChartContainer config={lineChartConfig} className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border)/0.5)" />
+            <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border)/0.3)" />
                 <XAxis 
                   dataKey="name" 
                   tickLine={false} 
                   axisLine={false} 
-                  tickMargin={8} 
+                  tickMargin={10} 
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                 />
                 <YAxis 
@@ -48,41 +51,50 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                 />
                 <Tooltip
-                  cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1, strokeDasharray: '3 3' }}
+                  cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1.5, strokeDasharray: '3 3' }}
                   content={<ChartTooltipContent indicator="line" />}
                 />
-                <Legend content={({ payload }) => (
-                  <div className="flex justify-center space-x-4 mt-2">
-                    {payload?.map((entry, index) => (
-                      <div key={`item-${index}`} className="flex items-center space-x-1">
-                        <span style={{ backgroundColor: entry.color }} className="h-2 w-2 inline-block rounded-full"></span>
-                        <span className="text-xs text-muted-foreground">{entry.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                )} />
+                <Legend 
+                  verticalAlign="bottom"
+                  content={({ payload }) => (
+                    <div className="flex justify-center space-x-4 mt-3">
+                      {payload?.map((entry, index) => (
+                        <div key={`item-${index}`} className="flex items-center space-x-1.5">
+                          <span style={{ backgroundColor: entry.color }} className="h-2.5 w-2.5 inline-block rounded-full"></span>
+                          <span className="text-xs text-muted-foreground">{entry.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )} 
+                />
                 <defs>
-                  <linearGradient id="fillCompleted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-completed)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="var(--color-completed)" stopOpacity={0.1}/>
+                  <linearGradient id="fillCompletedTrend" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-completed)" stopOpacity={0.6}/>
+                    <stop offset="95%" stopColor="var(--color-completed)" stopOpacity={0.05}/>
                   </linearGradient>
-                  <linearGradient id="fillActive" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-active)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="var(--color-active)" stopOpacity={0.1}/>
+                  <linearGradient id="fillActiveTrend" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-active)" stopOpacity={0.6}/>
+                    <stop offset="95%" stopColor="var(--color-active)" stopOpacity={0.05}/>
                   </linearGradient>
                 </defs>
-                <Area type="monotone" dataKey="completed" stroke="var(--color-completed)" fill="url(#fillCompleted)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-completed)'}} activeDot={{r:5}} />
-                <Area type="monotone" dataKey="active" stroke="var(--color-active)" fill="url(#fillActive)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-active)'}} activeDot={{r:5}}/>
+                <Area type="monotone" dataKey="completed" stroke="var(--color-completed)" fill="url(#fillCompletedTrend)" strokeWidth={2.5} dot={{ r:3, fill: 'var(--color-completed)'}} activeDot={{r:6, strokeWidth: 2, stroke: 'hsl(var(--background))'}} />
+                <Area type="monotone" dataKey="active" stroke="var(--color-active)" fill="url(#fillActiveTrend)" strokeWidth={2.5} dot={{ r:3, fill: 'var(--color-active)'}} activeDot={{r:6, strokeWidth: 2, stroke: 'hsl(var(--background))'}}/>
               </LineChart>
             </ResponsiveContainer>
           </ChartContainer>
         ) : (
-          <div className="flex items-center justify-center h-full text-center text-muted-foreground">
-            <p>Não há dados suficientes para exibir a tendência semanal. Verifique se seu CSV contém as colunas 'Data de criação' e 'Data de finalização' com datas válidas (formato dd/MM/aaaa).</p>
+          <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-4">
+            <TrendingUp className="w-12 h-12 text-muted-foreground/50 mb-4" />
+            <p className="font-medium text-foreground mb-1">Dados Insuficientes para Tendência</p>
+            {hasSomeData && chartData.length <= 1 && (
+                 <p className="text-xs max-w-sm">É necessário dados de mais de uma semana para visualizar uma tendência. Verifique os filtros ou as datas no seu CSV.</p>
+            )}
+            {!hasSomeData && (
+                 <p className="text-xs max-w-sm">Não há tarefas concluídas ou ativas nas colunas 'Data de criação' e 'Data de finalização' do seu CSV, ou as datas não estão no formato dd/MM/aaaa. Verifique os filtros aplicados.</p>
+            )}
           </div>
         )}
       </CardContent>
     </Card>
   );
 }
-

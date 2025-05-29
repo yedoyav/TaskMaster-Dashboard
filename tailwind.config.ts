@@ -64,8 +64,8 @@ export default {
         'status-red': '#F56565',
         'status-yellow': '#ECC94B',
         'status-blue': '#4299E1',
-        'yav-purple': '#7C3AED', // Kept for reference or specific use
-        'yav-cyan': '#06B6D4',   // Kept for reference or specific use
+        'yav-purple': '#7C3AED', 
+        'yav-cyan': '#06B6D4',   
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -73,9 +73,9 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
       boxShadow: {
-        'yav-md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px hsl(var(--primary) / 0.2)',
-        'yav-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px hsl(var(--primary) / 0.3)',
-        'yav-xl': '0 20px 25px -5px rgba(0,0,0,0.2), 0 10px 10px -5px rgba(0,0,0,0.08), 0 0 0 1px hsl(var(--primary) / 0.3)'
+        'yav-md': '0 4px 8px -2px hsla(var(--primary)/0.15), 0 2px 4px -2px hsla(var(--primary)/0.1)',
+        'yav-lg': '0 10px 15px -3px hsla(var(--primary)/0.2), 0 4px 6px -4px hsla(var(--primary)/0.15)',
+        'yav-xl': '0 20px 25px -5px hsla(var(--primary)/0.25), 0 8px 10px -6px hsla(var(--primary)/0.2)',
       },
   		keyframes: {
   			'accordion-down': {
@@ -94,15 +94,15 @@ export default {
   					height: '0'
   				}
   			},
-        'pulse-yav': { // Renamed to avoid conflict if 'pulse' is used by shadcn/tailwind itself
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '.7' },
+        'pulse-yav': { 
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '.85', transform: 'scale(0.98)' },
         }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-yav': 'pulse-yav 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-yav': 'pulse-yav 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
   		}
   	}
   },

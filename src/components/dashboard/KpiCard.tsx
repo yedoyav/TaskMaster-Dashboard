@@ -11,6 +11,7 @@ interface KpiCardProps {
   valueColorClass?: string;
   onClick?: () => void;
   className?: string;
+  description?: string;
 }
 
 export default function KpiCard({
@@ -18,29 +19,33 @@ export default function KpiCard({
   value,
   icon: Icon,
   iconColorClass = "text-accent",
-  borderColorClass = "border-accent",
+  borderColorClass = "border-accent", // Can be used for a subtle left border or removed
   valueColorClass = "text-foreground",
   onClick,
-  className
+  className,
+  description
 }: KpiCardProps) {
   return (
     <Card 
       className={cn(
-        "shadow-yav-lg flex flex-col justify-between transform hover:scale-[1.03] transition-transform duration-200",
+        "shadow-yav-lg flex flex-col justify-between transition-all duration-300 ease-out hover:shadow-yav-xl hover:scale-[1.02]",
         onClick ? "cursor-pointer" : "",
-        borderColorClass ? `border-l-4 ${borderColorClass}` : "",
+        // borderColorClass ? `border-l-4 ${borderColorClass}` : "", // Optional: re-add if desired
         className
       )}
       onClick={onClick}
     >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-normal text-muted-foreground">{title}</CardTitle>
-         <div className={cn("p-2.5 bg-card-foreground/5 rounded-lg", iconColorClass)}>
-            <Icon className="h-6 w-6" />
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+        <div className="space-y-1">
+          <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+          {description && <p className="text-xs text-muted-foreground/80">{description}</p>}
+        </div>
+         <div className={cn("p-2 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg", iconColorClass)}>
+            <Icon className="h-5 w-5" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className={cn("text-4xl font-bold", valueColorClass)}>{value}</div>
+        <div className={cn("text-3xl font-bold", valueColorClass)}>{value}</div>
       </CardContent>
     </Card>
   );
