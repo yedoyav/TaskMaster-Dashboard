@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { BotMessageSquare } from 'lucide-react';
 
 export default function Header() {
   return (
@@ -17,11 +15,7 @@ export default function Header() {
             priority
           />
         </Link>
-        <nav className="flex items-center space-x-4">
-          <Button variant="ghost" asChild>
-            <Link href="/" className="text-sm font-medium hover:text-primary">Dashboard</Link>
-          </Button>
-        </nav>
+        {/* O botão Dashboard foi removido */}
       </div>
     </header>
   );
