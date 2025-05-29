@@ -1,3 +1,4 @@
+
 "use client";
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
@@ -77,10 +78,11 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
           </ChartContainer>
         ) : (
           <div className="flex items-center justify-center h-full text-center text-muted-foreground">
-            <p>Nenhuma tarefa para exibir a tendência semanal com os filtros atuais.</p>
+            <p>Não há dados suficientes para exibir a tendência semanal. Verifique se seu CSV contém as colunas 'Data de criação' e 'Data de finalização' com datas válidas (formato dd/MM/aaaa).</p>
           </div>
         )}
       </CardContent>
     </Card>
   );
 }
+
