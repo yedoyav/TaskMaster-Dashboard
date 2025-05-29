@@ -1,3 +1,4 @@
+
 import { HOJE, START_OF_CURRENT_WEEK, END_OF_CURRENT_WEEK, Task } from './constants';
 
 export function convertTrackingTimeToHours(timeStr?: string | number): number {
@@ -39,32 +40,60 @@ export function convertTrackingTimeToHours(timeStr?: string | number): number {
 
 export function parseDate(dateStr?: string): Date | null {
   if (!dateStr || dateStr === "-" || String(dateStr).trim() === "") return null;
-  const parts = String(dateStr).split('/');
-  if (parts.length !== 3) return null;
-  const day = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1; // Mês é 0-indexado
-  const year = parseInt(parts[2], 10);
-  if (isNaN(day) || isNaN(month) || isNaN(year) || year < 1000 || year > 3000) return null;
-  const date = new Date(year, month, day);
-  // Check if date is valid and components match, to avoid issues like 31/04 becoming 01/05
-  if (isNaN(date.getTime()) || date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+  const sDateStr = String(dateStr).trim();
+  
+  const parts = sDateStr.split('/');
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10);
+    let month = parseInt(parts[1], 10);
+    let year = parseInt(parts[2], 10);
+
+    if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+
+    // Ajusta o mês para ser 0-indexado para o construtor Date
+    month = month - 1;
+
+    // Lida com anos de 2 dígitos, assume 20xx
+    if (year >= 0 && year <= 99) {
+      year += 2000;
+    }
+
+    // Checagem básica de sanidade para o ano de 4 dígitos após o ajuste
+    if (year < 1000 || year > 3000) return null; 
+
+    const date = new Date(year, month, day);
+    
+    // Verifica se a data é válida e se os componentes correspondem
+    if (isNaN(date.getTime()) || date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+      return null;
+    }
+    return date;
+  } else {
+    // Se não for dd/MM/yyyy ou dd/MM/yy, tenta um parse mais genérico (ex: ISO)
+    const genericDate = new Date(sDateStr);
+    if (!isNaN(genericDate.getTime())) {
+      // Verifica se o ano é razoável para evitar datas como "01-02-03" sendo interpretadas como ano 3.
+      const genericYear = genericDate.getFullYear();
+      if (genericYear > 1900 && genericYear < 3000) {
+          return genericDate;
+      }
+    }
     return null;
   }
-  return date;
 }
 
 export function getWeekIdentifier(date?: Date | null): string | null {
   if (!date || !(date instanceof Date) || isNaN(date.getTime())) return null;
-  // Create a new Date object to avoid modifying the original date
+  // Cria um novo objeto Date para evitar modificar a data original
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  // Set to nearest Thursday: current date + 4 - current day number
-  // Make Sunday's day number 7
+  // Define para a quinta-feira mais próxima: data atual + 4 - número do dia atual
+  // Faz o número do dia do domingo ser 7
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  // Get first day of year
+  // Pega o primeiro dia do ano
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  // Calculate full weeks to nearest Thursday
+  // Calcula semanas completas até a quinta-feira mais próxima
   const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  // Return YYYY-Www
+  // Retorna YYYY-Www
   return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
 
