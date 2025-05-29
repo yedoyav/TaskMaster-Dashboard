@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Loader2, Filter, FileWarning, LayoutGrid } from 'lucide-react';
+import { Loader2, Filter, FileWarning } from 'lucide-react'; // Removed LayoutGrid as it's not used
 import { useToast } from "@/hooks/use-toast";
 
 import CsvImport from '@/components/dashboard/CsvImport';
@@ -200,7 +200,7 @@ export default function DashboardPage() {
         onClearFilters={handleClearFilters}
         initialFilters={currentFilters}
       />
-      <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8 custom-scrollbar bg-gradient-to-br from-background via-card/10 to-background">
+      <SidebarInset className="flex-1 px-4 pb-4 pt-[5.5rem] md:px-6 md:pb-6 md:pt-[6rem] lg:px-8 lg:pb-8 lg:pt-[6.5rem] custom-scrollbar bg-gradient-to-br from-background via-card/10 to-background">
         <div className="container mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 pb-4 border-b border-border/30">
             <div>
