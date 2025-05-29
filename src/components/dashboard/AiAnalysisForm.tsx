@@ -13,15 +13,11 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { WorkflowBottleneckAnalysisInput, WorkflowBottleneckAnalysisOutput } from '@/ai/flows/workflow-bottleneck-analysis';
 
 const formSchema = z.object({
-  taskData: z.string().min(10, { message: "Por favor, insira dados de tarefas em formato JSON." })
+  taskDataCsv: z.string().min(10, { message: "Por favor, insira dados de tarefas em formato CSV." })
     .refine(data => {
-      try {
-        JSON.parse(data);
-        return true;
-      } catch {
-        return false;
-      }
-    }, { message: "Os dados inseridos não são um JSON válido."}),
+      // Basic check: at least one newline for header + one data row
+      return data.includes('\n');
+    }, { message: "Os dados em CSV devem conter pelo menos uma linha de cabeçalho e uma linha de dados."}),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -38,7 +34,7 @@ export default function AiAnalysisForm({ analyzeTasks }: AiAnalysisFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      taskData: "",
+      taskDataCsv: "",
     },
   });
 
@@ -47,7 +43,7 @@ export default function AiAnalysisForm({ analyzeTasks }: AiAnalysisFormProps) {
     setAnalysisResult(null);
     setAnalysisError(null);
     
-    const result = await analyzeTasks({ taskData: data.taskData });
+    const result = await analyzeTasks({ taskDataCsv: data.taskDataCsv });
 
     if ('error' in result) {
       setAnalysisError(result.error);
@@ -65,7 +61,7 @@ export default function AiAnalysisForm({ analyzeTasks }: AiAnalysisFormProps) {
             Análise de Gargalos no Fluxo de Trabalho (IA)
           </CardTitle>
           <CardDescription>
-            Insira os dados históricos das tarefas em formato JSON para identificar gargalos e receber sugestões de otimização.
+            Cole o conteúdo do seu arquivo CSV de tarefas históricas para identificar gargalos e receber sugestões de otimização.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -73,20 +69,20 @@ export default function AiAnalysisForm({ analyzeTasks }: AiAnalysisFormProps) {
             <CardContent className="space-y-6">
               <FormField
                 control={form.control}
-                name="taskData"
+                name="taskDataCsv"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Dados das Tarefas (JSON)</FormLabel>
+                    <FormLabel>Dados das Tarefas (CSV)</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder='Cole aqui o JSON dos dados das tarefas. Ex: [{"id": 1, "status": "Pendente", ...}, ...]'
+                        placeholder='Cole aqui o conteúdo do seu arquivo CSV. Ex:\nID da tarefa,Tarefa,Status,Prazo\n1,"Minha Tarefa","Pendente","01/01/2025"\n...'
                         className="min-h-[200px] text-sm bg-background focus-visible:ring-primary"
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      Cada objeto deve representar uma tarefa com propriedades como status, responsável, estratégia, e tempo de conclusão.
+                      A primeira linha deve ser o cabeçalho. Inclua colunas como status, responsável, estratégia, e datas relevantes.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -103,7 +99,7 @@ export default function AiAnalysisForm({ analyzeTasks }: AiAnalysisFormProps) {
                 ) : (
                   <>
                     <Wand2 className="mr-2 h-4 w-4" />
-                    Analisar Tarefas
+                    Analisar Tarefas (CSV)
                   </>
                 )}
               </Button>

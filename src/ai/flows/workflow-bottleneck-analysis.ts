@@ -12,7 +12,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const WorkflowBottleneckAnalysisInputSchema = z.object({
-  taskData: z.string().describe('A JSON string containing historical task data. Each object should represent a task with properties like status, responsible, strategy, and completion time.'),
+  taskDataCsv: z.string().describe('A CSV string containing historical task data. Each row should represent a task, and the first row must contain headers like status, responsible, strategy, completion time, etc.'),
 });
 export type WorkflowBottleneckAnalysisInput = z.infer<typeof WorkflowBottleneckAnalysisInputSchema>;
 
@@ -32,11 +32,11 @@ const prompt = ai.definePrompt({
   output: {schema: WorkflowBottleneckAnalysisOutputSchema},
   prompt: `You are an expert project management consultant specializing in identifying and resolving workflow bottlenecks.
 
-You will analyze the provided historical task data to identify bottlenecks and suggest optimizations to improve efficiency. The task data will be provided as a JSON string.
+You will analyze the provided historical task data, formatted as a CSV string, to identify bottlenecks and suggest optimizations to improve efficiency. The first row of the CSV will contain the headers.
 
-Analyze the following task data:
+Analyze the following task data (CSV format):
 
-{{taskData}}
+{{{taskDataCsv}}}
 
 Based on this data, identify bottlenecks in the task workflows and suggest optimizations. Be specific.
 `,
