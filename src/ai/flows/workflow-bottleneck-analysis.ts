@@ -12,13 +12,13 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const WorkflowBottleneckAnalysisInputSchema = z.object({
-  taskDataCsv: z.string().describe('A CSV string containing historical task data. Each row should represent a task, and the first row must contain headers like status, responsible, strategy, completion time, etc.'),
+  taskDataCsv: z.string().describe('Uma string CSV contendo dados históricos de tarefas. Cada linha deve representar uma tarefa, e a primeira linha deve conter cabeçalhos como status, responsavel, estrategia, tempo de conclusao, etc.'),
 });
 export type WorkflowBottleneckAnalysisInput = z.infer<typeof WorkflowBottleneckAnalysisInputSchema>;
 
 const WorkflowBottleneckAnalysisOutputSchema = z.object({
-  bottleneckIdentifications: z.string().describe('Identified bottlenecks in the task workflows, such as stages with excessive delays or resource allocation issues.'),
-  optimizationSuggestions: z.string().describe('Suggestions for optimizing task workflows based on the identified bottlenecks, such as reallocating resources or adjusting task dependencies.'),
+  bottleneckIdentifications: z.string().describe('Gargalos identificados nos fluxos de trabalho das tarefas, como etapas com atrasos excessivos ou problemas de alocação de recursos.'),
+  optimizationSuggestions: z.string().describe('Sugestões para otimizar os fluxos de trabalho das tarefas com base nos gargalos identificados, como realocar recursos ou ajustar dependências de tarefas.'),
 });
 export type WorkflowBottleneckAnalysisOutput = z.infer<typeof WorkflowBottleneckAnalysisOutputSchema>;
 
@@ -30,15 +30,15 @@ const prompt = ai.definePrompt({
   name: 'workflowBottleneckAnalysisPrompt',
   input: {schema: WorkflowBottleneckAnalysisInputSchema},
   output: {schema: WorkflowBottleneckAnalysisOutputSchema},
-  prompt: `You are an expert project management consultant specializing in identifying and resolving workflow bottlenecks.
+  prompt: `Você é um consultor especialista em gerenciamento de projetos, especializado em identificar e resolver gargalos de fluxo de trabalho.
 
-You will analyze the provided historical task data, formatted as a CSV string, to identify bottlenecks and suggest optimizations to improve efficiency. The first row of the CSV will contain the headers.
+Você analisará os dados históricos de tarefas fornecidos, formatados como uma string CSV, para identificar gargalos e sugerir otimizações para melhorar a eficiência. A primeira linha do CSV conterá os cabeçalhos.
 
-Analyze the following task data (CSV format):
+Analise os seguintes dados de tarefas (formato CSV):
 
 {{{taskDataCsv}}}
 
-Based on this data, identify bottlenecks in the task workflows and suggest optimizations. Be specific.
+Com base nesses dados, identifique gargalos nos fluxos de trabalho das tarefas e sugira otimizações. Seja específico.
 `,
 });
 

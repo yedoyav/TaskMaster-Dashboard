@@ -24,7 +24,7 @@ export default function Header() {
           <Button variant="outline" size="sm" asChild className="border-primary/50 hover:border-primary text-primary hover:text-primary hover:bg-primary/10">
             <Link href="/analysis" className="flex items-center">
               <BotMessageSquare className="mr-2 h-4 w-4" />
-              AI Analysis
+              Análise IA
             </Link>
           </Button>
         </nav>

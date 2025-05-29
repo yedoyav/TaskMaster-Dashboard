@@ -104,7 +104,7 @@ export default function KpiDashboard({ kpiData, onCriticalCardClick }: KpiDashbo
           cardColorClass="bg-yav-purple/10 border-yav-purple"
           textColorClass="text-yav-purple"
           iconColorClass="text-white bg-yav-purple/80 p-1 rounded"
-          description="Alta prioridade não iniciada"
+          description="Alta prioridade pendente ou em andamento"
         />
         <CriticalKpiCard 
           title="Pendente Terceiros" 
