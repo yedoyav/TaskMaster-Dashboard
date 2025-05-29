@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -41,7 +42,22 @@ export default function CriticalTaskModal({ isOpen, onOpenChange, title, tasks }
           ) : (
             <ul className="divide-y divide-border/30">
               {tasks
-                .sort((a, b) => (a.Prazo?.getTime() || 0) - (b.Prazo?.getTime() || 0) || a['ID da tarefa'] - b['ID da tarefa'])
+                .sort((a, b) => {
+                  const aPrazo = a.Prazo ? a.Prazo.getTime() : null;
+                  const bPrazo = b.Prazo ? b.Prazo.getTime() : null;
+
+                  if (aPrazo && bPrazo) {
+                    return aPrazo - bPrazo; // Ambas têm prazo, ordenar pelo prazo
+                  }
+                  if (aPrazo) {
+                    return -1; // 'a' tem prazo, 'b' não. 'a' vem primeiro.
+                  }
+                  if (bPrazo) {
+                    return 1; // 'b' tem prazo, 'a' não. 'b' vem primeiro.
+                  }
+                  // Nenhuma tem prazo, ordenar pelo ID
+                  return a['ID da tarefa'] - b['ID da tarefa'];
+                })
                 .map((task) => {
                   const prazo = task.Prazo ? task.Prazo.toLocaleDateString(DATE_LOCALE, {day: '2-digit', month: '2-digit', year: 'numeric'}) : 'N/D';
                   const taskLink = task.urlApp || task.urlCliente;

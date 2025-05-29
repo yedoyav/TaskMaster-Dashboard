@@ -141,7 +141,7 @@ export default function TasksTable({ tasks }: TasksTableProps) {
               paginatedTasks.map((task) => (
                 <TableRow key={task['ID da tarefa']}>
                   <TableCell className="text-xs">{task['ID da tarefa']}</TableCell>
-                  <TableCell className="text-xs max-w-xs truncate" title={task['Tarefa'] || 'N/D'}>{task['Tarefa'] || 'N/D'}</TableCell>
+                  <TableCell className="text-xs sm:max-w-xs md:max-w-sm lg:max-w-md truncate" title={task['Tarefa'] || 'N/D'}>{task['Tarefa'] || 'N/D'}</TableCell>
                   <TableCell className="text-xs">{task['Estratégia'] || 'N/D'}</TableCell>
                   <TableCell className="text-xs">{task['Responsável'] || 'N/D'}</TableCell>
                   <TableCell className="text-xs">
