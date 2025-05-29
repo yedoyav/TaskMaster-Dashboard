@@ -59,13 +59,24 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+        'status-green': '#48BB78',
+        'status-red': '#F56565',
+        'status-yellow': '#ECC94B',
+        'status-blue': '#4299E1',
+        'yav-purple': '#7C3AED', // Kept for reference or specific use
+        'yav-cyan': '#06B6D4',   // Kept for reference or specific use
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+      boxShadow: {
+        'yav-md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px hsl(var(--primary) / 0.2)',
+        'yav-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px hsl(var(--primary) / 0.3)',
+        'yav-xl': '0 20px 25px -5px rgba(0,0,0,0.2), 0 10px 10px -5px rgba(0,0,0,0.08), 0 0 0 1px hsl(var(--primary) / 0.3)'
+      },
   		keyframes: {
   			'accordion-down': {
   				from: {
@@ -82,11 +93,16 @@ export default {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+        'pulse-yav': { // Renamed to avoid conflict if 'pulse' is used by shadcn/tailwind itself
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '.7' },
+        }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+        'pulse-yav': 'pulse-yav 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
   		}
   	}
   },
