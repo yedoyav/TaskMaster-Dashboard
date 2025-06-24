@@ -28,7 +28,7 @@ export default function CriticalKpiCard({
   return (
     <Card 
       className={cn(
-        "shadow-yav-md p-4 rounded-lg border-l-4 transition-all duration-300 ease-out hover:shadow-yav-lg hover:scale-[1.03]",
+        "shadow-md p-4 rounded-lg border-l-4 transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.03]",
         cardColorClass, // Apply the card background/border color
         onClick ? "cursor-pointer" : "",
         className

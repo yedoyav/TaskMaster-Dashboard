@@ -25,7 +25,7 @@ export default function EtapaDistributionChart({ data }: EtapaDistributionChartP
   const chartAvailable = chartData.length > 0 && chartData.some(d => d.tasks > 0);
 
   return (
-    <Card className="flex flex-col shadow-yav-lg border border-border/30 h-full">
+    <Card className="flex flex-col shadow-lg border border-border/30 h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold text-foreground">
           Distribuição por Etapa

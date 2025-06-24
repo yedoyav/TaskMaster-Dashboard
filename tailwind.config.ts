@@ -64,8 +64,6 @@ export default {
         'status-red': '#F56565',
         'status-yellow': '#ECC94B',
         'status-blue': '#4299E1',
-        'yav-purple': '#7C3AED', 
-        'yav-cyan': '#06B6D4',   
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -73,9 +71,12 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
       boxShadow: {
-        'yav-md': '0 4px 8px -2px hsla(var(--primary)/0.15), 0 2px 4px -2px hsla(var(--primary)/0.1)',
-        'yav-lg': '0 10px 15px -3px hsla(var(--primary)/0.2), 0 4px 6px -4px hsla(var(--primary)/0.15)',
-        'yav-xl': '0 20px 25px -5px hsla(var(--primary)/0.25), 0 8px 10px -6px hsla(var(--primary)/0.2)',
+        sm: '1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 1px 2px 0px hsl(0 0% 0% / 0.06)',
+        DEFAULT: '1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 1px 2px 0px hsl(0 0% 0% / 0.06)',
+        md: '1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 2px 4px 0px hsl(0 0% 0% / 0.06)',
+        lg: '1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 4px 6px 0px hsl(0 0% 0% / 0.06)',
+        xl: '1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 8px 10px 0px hsl(0 0% 0% / 0.06)',
+        '2xl': '1px 2px 5px 1px hsl(0 0% 0% / 0.15)',
       },
   		keyframes: {
   			'accordion-down': {

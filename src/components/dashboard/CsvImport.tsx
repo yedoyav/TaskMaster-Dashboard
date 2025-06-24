@@ -86,7 +86,7 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
 
   return (
     <section className="flex-grow flex flex-col items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-background to-card/30">
-      <div className="w-full max-w-xl bg-card p-8 sm:p-12 rounded-2xl shadow-yav-xl border border-border/50 transform transition-all duration-500 ease-out hover:shadow-yav-2xl">
+      <div className="w-full max-w-xl bg-card p-8 sm:p-12 rounded-2xl shadow-xl border border-border/50 transform transition-all duration-500 ease-out hover:shadow-2xl">
         <div className="flex justify-center mb-6">
             <Image 
                 src="https://yavdigital.com.br/wp-content/uploads/2025/02/yav-logo-1.webp" 

@@ -92,7 +92,7 @@ export default function TasksTable({ tasks }: TasksTableProps) {
 
 
   return (
-    <div className="bg-card p-6 rounded-xl shadow-yav-xl border border-border/20">
+    <div className="bg-card p-6 rounded-xl shadow-xl border border-border/20">
       <h3 className="text-xl font-semibold border-b border-border/50 pb-3 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
         Relatório Detalhado
       </h3>

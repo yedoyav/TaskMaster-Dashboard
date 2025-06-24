@@ -17,7 +17,7 @@ export default function OverallStatusGaugeChart({ data }: OverallStatusGaugeChar
 
 
   return (
-    <Card className="flex flex-col shadow-yav-lg border border-border/30 h-full">
+    <Card className="flex flex-col shadow-lg border border-border/30 h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold text-foreground">
           Visão Geral do Projeto

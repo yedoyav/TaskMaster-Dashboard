@@ -29,17 +29,17 @@ export default function KpiDashboard({ kpiData, onCriticalCardClick }: KpiDashbo
           title="Tarefas Ativas" 
           value={kpiData.activeTasks} 
           icon={ListTodo} 
-          iconColorClass="text-yav-cyan"
-          valueColorClass="text-yav-cyan"
-          borderColorClass="border-yav-cyan"
+          iconColorClass="text-chart-3"
+          valueColorClass="text-chart-3"
+          borderColorClass="border-chart-3"
         />
         <KpiCard 
           title="Tarefas Pendentes" 
           value={kpiData.pendingTasks} 
           icon={Clock3} 
-          iconColorClass="text-yav-purple"
-          valueColorClass="text-yav-purple"
-          borderColorClass="border-yav-purple"
+          iconColorClass="text-chart-1"
+          valueColorClass="text-chart-1"
+          borderColorClass="border-chart-1"
         />
         <KpiCard 
           title="Em Andamento" 
@@ -69,9 +69,9 @@ export default function KpiDashboard({ kpiData, onCriticalCardClick }: KpiDashbo
           title="Tempo Cliente Ativo"
           value={kpiData.clientActiveTime}
           icon={CalendarClock}
-          iconColorClass="text-yav-cyan"
-          valueColorClass="text-yav-cyan"
-          borderColorClass="border-yav-cyan"
+          iconColorClass="text-chart-3"
+          valueColorClass="text-chart-3"
+          borderColorClass="border-chart-3"
           description="Desde a 1ª tarefa"
         />
 
@@ -101,9 +101,9 @@ export default function KpiDashboard({ kpiData, onCriticalCardClick }: KpiDashbo
           value={kpiData.highPriorityPendingTasks}
           icon={TrendingUp}
           onClick={() => onCriticalCardClick('prioridadeAltaPendente')}
-          cardColorClass="bg-yav-purple/10 border-yav-purple"
-          textColorClass="text-yav-purple"
-          iconColorClass="text-white bg-yav-purple/80 p-1 rounded"
+          cardColorClass="bg-primary/10 border-primary"
+          textColorClass="text-primary"
+          iconColorClass="text-white bg-primary/80 p-1 rounded"
           description="Alta prioridade pendente ou em andamento"
         />
         <CriticalKpiCard 

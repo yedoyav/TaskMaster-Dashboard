@@ -28,7 +28,7 @@ export default function KpiCard({
   return (
     <Card 
       className={cn(
-        "shadow-yav-lg flex flex-col justify-between transition-all duration-300 ease-out hover:shadow-yav-xl hover:scale-[1.02]",
+        "shadow-lg flex flex-col justify-between transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]",
         onClick ? "cursor-pointer" : "",
         // borderColorClass ? `border-l-4 ${borderColorClass}` : "", // Optional: re-add if desired
         className

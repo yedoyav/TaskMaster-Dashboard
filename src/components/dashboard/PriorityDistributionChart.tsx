@@ -23,7 +23,7 @@ export default function PriorityDistributionChart({ data }: PriorityDistribution
   const noDataPlaceholder = data.labels[0] === 'N/D' && data.datasets[0].data[0] === 1 && data.labels.length ===1 ;
 
   return (
-    <Card className="flex flex-col shadow-yav-lg border border-border/30 h-full">
+    <Card className="flex flex-col shadow-lg border border-border/30 h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold text-foreground">
           Distribuição por Prioridade
