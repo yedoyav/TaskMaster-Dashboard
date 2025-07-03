@@ -30,8 +30,8 @@ export const START_OF_CURRENT_WEEK = getStartOfWeek(HOJE);
 export const END_OF_CURRENT_WEEK = getEndOfWeek(HOJE);
 
 export const STATUS_COLORS: Record<string, string> = {
-  'Pendente': 'hsl(var(--primary))',
-  'Em andamento': 'hsl(var(--accent))',
+  'Pendente': 'hsl(var(--chart-1))',
+  'Em andamento': 'hsl(var(--chart-2))',
   'Finalizado': 'hsl(var(--status-green-hsl))',
   'Atrasada': 'hsl(var(--status-yellow-hsl))',
   'Pausada': 'hsl(var(--status-yellow-hsl))',
