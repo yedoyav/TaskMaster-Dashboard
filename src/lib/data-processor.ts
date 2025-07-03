@@ -50,29 +50,23 @@ export function parseDate(dateStr?: string): Date | null {
 
     if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
 
-    // Ajusta o mês para ser 0-indexado para o construtor Date
     month = month - 1;
 
-    // Lida com anos de 2 dígitos, assume 20xx
     if (year >= 0 && year <= 99) {
       year += 2000;
     }
 
-    // Checagem básica de sanidade para o ano de 4 dígitos após o ajuste
     if (year < 1000 || year > 3000) return null; 
 
     const date = new Date(year, month, day);
     
-    // Verifica se a data é válida e se os componentes correspondem
     if (isNaN(date.getTime()) || date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
       return null;
     }
     return date;
   } else {
-    // Se não for dd/MM/yyyy ou dd/MM/yy, tenta um parse mais genérico (ex: ISO)
     const genericDate = new Date(sDateStr);
     if (!isNaN(genericDate.getTime())) {
-      // Verifica se o ano é razoável para evitar datas como "01-02-03" sendo interpretadas como ano 3.
       const genericYear = genericDate.getFullYear();
       if (genericYear > 1900 && genericYear < 3000) {
           return genericDate;
@@ -84,75 +78,76 @@ export function parseDate(dateStr?: string): Date | null {
 
 export function getWeekIdentifier(date?: Date | null): string | null {
   if (!date || !(date instanceof Date) || isNaN(date.getTime())) return null;
-  // Cria um novo objeto Date para evitar modificar a data original
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  // Define para a quinta-feira mais próxima: data atual + 4 - número do dia atual
-  // Faz o número do dia do domingo ser 7
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  // Pega o primeiro dia do ano
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  // Calcula semanas completas até a quinta-feira mais próxima
   const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  // Retorna YYYY-Www
   return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
 
+function normalizeBlingStatus(blingStatus: string): string {
+    const s = blingStatus.toLowerCase();
+    if (s.includes('atendido')) return 'Finalizado';
+    if (s.includes('cancelado')) return 'Descontinuada';
+    if (s.includes('andamento')) return 'Em andamento';
+    if (s.includes('em aberto') || s.includes('pendente')) return 'Pendente';
+    return 'Pendente'; // Default
+}
+
 export function processRow(row: Record<string, any>): Task {
-  const newRow: Task = { ...row } as Task;
+  const newRow: Partial<Task> & { [key: string]: any } = {};
 
   try {
-    newRow['ID da tarefa'] = parseInt(String(newRow['ID da tarefa']), 10);
-    newRow['Carga de Trabalho'] = parseFloat(String(newRow['Carga de Trabalho'] || '0').replace(',', '.'));
-    newRow['Prioridade'] = newRow['Prioridade'] ? parseInt(String(newRow['Prioridade']), 10) : undefined;
-
-    newRow['Data de criação'] = parseDate(String(newRow['Data de criação']));
-    newRow['Última atualização'] = parseDate(String(newRow['Última atualização']));
-    newRow['Data de início'] = parseDate(String(newRow['Data de início']));
-    newRow['Prazo'] = parseDate(String(newRow['Prazo']));
-    newRow['Data de finalização'] = parseDate(String(newRow['Data de finalização']));
-
-    newRow['Tempo de Tracking (Horas)'] = convertTrackingTimeToHours(newRow['Tempo de Tracking']);
-
-    if (newRow['Status'] && typeof newRow['Status'] === 'string') {
-      const trimmedStatus = String(newRow['Status']).trim();
-      if (trimmedStatus === '') {
-        newRow['Status'] = 'N/D';
-      } else {
-        newRow['Status'] = trimmedStatus.charAt(0).toUpperCase() + trimmedStatus.slice(1).toLowerCase();
-      }
-    } else if (!newRow['Status'] || String(newRow['Status']).trim() === '') {
-      newRow['Status'] = 'N/D';
-    }
+    // Map Bling columns to Task interface
+    newRow['ID da tarefa'] = parseInt(String(row['ID']), 10);
+    newRow['Tarefa'] = row['Descrição'] || 'Tarefa sem nome';
+    newRow['Status'] = row['Situação'] ? normalizeBlingStatus(row['Situação']) : 'N/D';
+    newRow['Responsável'] = row['Vendedor'] || 'N/A';
+    newRow['Estratégia'] = row['Loja virtual'] || 'N/A';
+    newRow['Prioridade'] = row['Prioridade'] ? parseInt(String(row['Prioridade']), 10) : 3; // Default to Baixa
     
-    newRow.AtrasadaCalculado = !!(newRow['Prazo'] && newRow['Prazo'] < HOJE && newRow['Status'] !== 'Finalizado' && newRow['Status'] !== 'Descontinuada');
+    newRow['Data de criação'] = parseDate(String(row['Data']));
+    newRow['Prazo'] = null; // Bling default CSV doesn't have a deadline
+    newRow['Data de finalização'] = newRow['Status'] === 'Finalizado' ? parseDate(String(row['Data'])) : null; // Assume completion date is order date for 'Atendido'
+    newRow['Última atualização'] = newRow['Data de finalização'] || newRow['Data de criação'];
+
+
+    // Fields not in Bling default export, set to defaults
+    newRow['Carga de Trabalho'] = 0;
+    newRow['Tempo de Tracking (Horas)'] = 0;
+    newRow['Pausada'] = 'Não';
+    newRow['Pendente com'] = '';
+    newRow['Etapa'] = 'Geral'; // Default Etapa
+
+    // Calculated fields
+    newRow.AtrasadaCalculado = !!(newRow.Prazo && newRow.Prazo < HOJE && newRow.Status !== 'Finalizado' && newRow.Status !== 'Descontinuada');
 
     const seteDiasAtras = new Date(HOJE);
     seteDiasAtras.setDate(HOJE.getDate() - 7);
-    newRow.DesatualizadaCalculado = newRow['Status'] !== 'Finalizado' &&
-      newRow['Status'] !== 'Descontinuada' &&
-      String(newRow['Pausada']).toLowerCase() !== 'sim' &&
+    newRow.DesatualizadaCalculado = newRow.Status !== 'Finalizado' &&
+      newRow.Status !== 'Descontinuada' &&
+      String(newRow.Pausada).toLowerCase() !== 'sim' &&
       !!newRow['Última atualização'] &&
       newRow['Última atualização'] < seteDiasAtras;
 
-    newRow.FinalizadaNestaSemanaCalculado = newRow['Status'] === 'Finalizado' &&
+    newRow.FinalizadaNestaSemanaCalculado = newRow.Status === 'Finalizado' &&
       !!newRow['Data de finalização'] &&
       newRow['Data de finalização'] >= START_OF_CURRENT_WEEK &&
       newRow['Data de finalização'] <= END_OF_CURRENT_WEEK;
 
-    newRow.PrioridadeAltaPendenteCalculado = newRow['Prioridade'] === 1 &&
-      (newRow['Status'] === 'Pendente' || newRow['Status'] === 'Em andamento');
+    newRow.PrioridadeAltaPendenteCalculado = newRow.Prioridade === 1 &&
+      (newRow.Status === 'Pendente' || newRow.Status === 'Em andamento');
 
     newRow.ComPendenciaExternaCalculado = !!(newRow['Pendente com'] && String(newRow['Pendente com']).trim() !== '');
 
-    newRow.SemanaConclusao = (newRow['Status'] === 'Finalizado' && newRow['Data de finalização']) ? getWeekIdentifier(newRow['Data de finalização']) : null;
+    newRow.SemanaConclusao = (newRow.Status === 'Finalizado' && newRow['Data de finalização']) ? getWeekIdentifier(newRow['Data de finalização']) : null;
     newRow.SemanaCriacao = newRow['Data de criação'] ? getWeekIdentifier(newRow['Data de criação']) : null;
 
-    newRow.AtivaCalculado = newRow['Status'] !== 'Finalizado' && newRow['Status'] !== 'Descontinuada' && String(newRow['Pausada']).toLowerCase() !== 'sim';
+    newRow.AtivaCalculado = newRow.Status !== 'Finalizado' && newRow.Status !== 'Descontinuada' && String(newRow.Pausada).toLowerCase() !== 'sim';
 
-    return newRow;
+    return newRow as Task;
   } catch (error) {
-    console.error('Erro ao processar linha:', row, error);
-    newRow._error = true;
-    return newRow;
+    console.error('Erro ao processar linha do Bling:', row, error);
+    return { ...newRow, _error: true } as Task;
   }
 }

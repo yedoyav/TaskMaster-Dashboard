@@ -8,7 +8,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarGroupContent
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
@@ -30,15 +29,14 @@ export interface FiltersState {
   statuses: string[];
   strategies: string[];
   priorities: string[];
-  paused: string; // 'all', 'Sim', 'Não'
-  waitingOnSomeone: string; // 'all', 'yes', 'no'
+  paused: string;
+  waitingOnSomeone: string;
 }
 
 interface FiltersSidebarProps {
   allTasks: Task[];
-  onApplyFilters: (filters: FiltersState) => void;
-  onClearFilters: () => void;
-  initialFilters: FiltersState;
+  filters: FiltersState;
+  onFiltersChange: (filters: FiltersState) => void;
 }
 
 // MultiSelect component
@@ -96,7 +94,6 @@ function MultiSelect({ options, selected, onChange, placeholder = "Selecione..."
                   value={option.value}
                   onSelect={() => {
                     handleSelect(option.value);
-                    // setOpen(false); // Keep open for multi-select
                   }}
                   className="text-xs"
                 >
@@ -118,31 +115,18 @@ function MultiSelect({ options, selected, onChange, placeholder = "Selecione..."
 }
 
 
-export default function FiltersSidebar({ allTasks, onApplyFilters, onClearFilters, initialFilters }: FiltersSidebarProps) {
-  const [filters, setFilters] = useState<FiltersState>(initialFilters);
-  const [hasChanges, setHasChanges] = useState(false);
-
-  useEffect(() => {
-    setFilters(initialFilters);
-    setHasChanges(false);
-  }, [initialFilters]);
+export default function FiltersSidebar({ allTasks, filters, onFiltersChange }: FiltersSidebarProps) {
 
   const handleFilterChange = <K extends keyof FiltersState>(key: K, value: FiltersState[K]) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setHasChanges(true);
+    onFiltersChange({ ...filters, [key]: value });
   };
   
   const handleDateRangeChange = (dateRange?: DateRange) => {
     handleFilterChange('dateRange', dateRange);
   };
 
-  const handleApply = () => {
-    onApplyFilters(filters);
-    setHasChanges(false);
-  };
-
   const handleClear = () => {
-    const clearedFilters: FiltersState = {
+    onFiltersChange({
       dateRange: undefined,
       responsibles: [],
       statuses: [],
@@ -150,10 +134,7 @@ export default function FiltersSidebar({ allTasks, onApplyFilters, onClearFilter
       priorities: [],
       paused: 'all',
       waitingOnSomeone: 'all',
-    };
-    setFilters(clearedFilters);
-    onClearFilters(); // This should reset parent state as well
-    setHasChanges(false);
+    });
   };
 
   const responsibleOptions = getUniqueValues(allTasks, 'Responsável').map(val => ({ value: val, label: val }));
@@ -277,11 +258,7 @@ export default function FiltersSidebar({ allTasks, onApplyFilters, onClearFilter
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 space-y-2 border-t">
-        <Button onClick={handleApply} className="w-full bg-gradient-to-r from-primary to-accent hover:saturate-125 text-primary-foreground">
-          Aplicar Filtros
-          {hasChanges && <span className="ml-2 inline-block h-2 w-2 animate-pulse-yav rounded-full bg-background" />}
-        </Button>
+      <SidebarFooter className="p-4 border-t">
         <Button onClick={handleClear} variant="outline" className="w-full text-accent border-accent/70 hover:border-accent hover:text-accent hover:bg-accent/10">
           <RotateCcw className="mr-2 h-4 w-4" /> Limpar Filtros
         </Button>
@@ -289,4 +266,3 @@ export default function FiltersSidebar({ allTasks, onApplyFilters, onClearFilter
     </Sidebar>
   );
 }
-

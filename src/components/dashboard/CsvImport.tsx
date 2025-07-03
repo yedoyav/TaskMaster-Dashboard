@@ -11,14 +11,13 @@ import { UploadCloud, FileText, AlertTriangle, Loader2, CheckCircle, ShieldX } f
 import { processRow } from '@/lib/data-processor';
 import type { Task } from '@/lib/constants';
 import Image from 'next/image';
-import { cn } from '@/lib/utils'; // Added this import
+import { cn } from '@/lib/utils';
 
 interface CsvImportProps {
   onDataLoaded: (data: Task[], fileName: string) => void;
-  onLoadingChange: (loading: boolean) => void;
 }
 
-export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportProps) {
+export default function CsvImport({ onDataLoaded }: CsvImportProps) {
   const [fileName, setFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,15 +30,14 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
     setFileName(file.name);
     setError(null);
     setIsLoading(true);
-    onLoadingChange(true);
     setProcessedTasksCount(null);
 
     Papa.parse<Record<string, any>>(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: header => header.trim(),
       complete: (results) => {
         setIsLoading(false);
-        onLoadingChange(false);
 
         if (results.errors && results.errors.length > 0) {
           console.error("Erros ao parsear CSV:", results.errors);
@@ -48,7 +46,7 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
           return;
         }
 
-        const requiredHeaders = ['ID da tarefa', 'Tarefa', 'Status', 'Prazo'];
+        const requiredHeaders = ['ID', 'Descrição', 'Situação', 'Data'];
         const csvHeaders = results.meta.fields;
 
         if (!csvHeaders) {
@@ -56,18 +54,19 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
           setFileName(null);
           return;
         }
+        
+        const lowerCaseCsvHeaders = csvHeaders.map(h => h.toLowerCase());
 
-        const missingHeaders = requiredHeaders.filter(header => !csvHeaders.includes(header));
+        const missingHeaders = requiredHeaders.filter(header => !lowerCaseCsvHeaders.includes(header.toLowerCase()));
         if (missingHeaders.length > 0) {
-          setError(`Erro na estrutura do CSV. Colunas obrigatórias faltando: ${missingHeaders.join(', ')}.`);
+          setError(`Erro na estrutura do CSV. Colunas obrigatórias do Bling faltando: ${missingHeaders.join(', ')}. Verifique se o arquivo é um export de Pedidos.`);
           setFileName(null);
           return;
         }
 
-        const processedData = results.data.map(processRow).filter(row => !row._error);
+        const processedData = results.data.map(processRow).filter(row => row && !row._error);
         setProcessedTasksCount(processedData.length);
         if (processedData.length > 0) {
-            // Delay slightly to allow UI update before transitioning
             setTimeout(() => onDataLoaded(processedData, file.name), 500);
         } else {
             setError("Nenhuma tarefa válida encontrada no arquivo CSV após o processamento.");
@@ -76,7 +75,6 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
       },
       error: (err: any) => {
         setIsLoading(false);
-        onLoadingChange(false);
         console.error("Erro crítico ao parsear CSV:", err);
         setError(`Erro crítico ao carregar o arquivo: ${err.message}. Tente novamente.`);
         setFileName(null);
@@ -126,14 +124,14 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
                  <>
                     <ShieldX className="w-12 h-12 text-destructive mb-3" />
                     <p className="text-lg font-medium text-destructive">Falha ao Carregar</p>
-                    <p className="text-sm text-muted-foreground mt-1 px-4">{error}</p>
+                    <p className="text-sm text-muted-foreground mt-1 px-4 text-center">{error}</p>
                     <Button variant="link" size="sm" className="mt-2 text-accent" onClick={() => {setError(null); setFileName(null);}}>Tentar Novamente</Button>
                  </>
             ) : (
               <>
                 <UploadCloud className="w-12 h-12 text-accent/80 group-hover:text-accent mb-3 transition-colors" />
                 <p className="text-lg font-medium text-foreground group-hover:text-accent transition-colors">Clique para carregar ou arraste seu CSV</p>
-                <p className="text-sm text-muted-foreground mt-1">Formatos aceitos: .csv</p>
+                <p className="text-sm text-muted-foreground mt-1">Export de Pedidos do Bling (.csv)</p>
               </>
             )}
             <Input type="file" id="csvFile" accept=".csv" className="hidden" onChange={handleFileChange} disabled={isLoading || (!!fileName && !error)} />
@@ -142,7 +140,7 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
 
         {!isLoading && !fileName && !error && (
             <p className="text-xs text-muted-foreground/70 mt-8 text-center">
-                Garanta que seu CSV inclua as colunas: 'ID da tarefa', 'Tarefa', 'Status', e 'Prazo'.
+                Use o arquivo de exportação de pedidos do Bling (Modelo Padrão).
             </p>
         )}
       </div>
@@ -152,5 +150,3 @@ export default function CsvImport({ onDataLoaded, onLoadingChange }: CsvImportPr
     </section>
   );
 }
-
-    
