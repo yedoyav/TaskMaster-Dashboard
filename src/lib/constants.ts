@@ -63,15 +63,15 @@ export function getStatusColor(statusKey?: string): string {
     const variableName = color.match(/var\((--[^)]+)\)/)?.[1];
     if (variableName) {
       const colorMapForJs: Record<string, string> = {
-        'hsl(var(--primary))': '#5E35B1', // Deep Purple
-        'hsl(var(--accent))': '#BE2EDD', // Electric Purple
+        'hsl(var(--primary))': '#8a79ab',
+        'hsl(var(--accent))': '#e6a5b8',
         'var(--status-green)': '#48BB78',
         'var(--status-yellow)': '#ECC94B',
         'var(--status-blue)': '#4299E1',
-        'hsl(var(--muted-foreground))': '#a1a1aa',
-        'hsl(var(--border))': '#3f3f46',
+        'hsl(var(--muted-foreground))': '#6b6880',
+        'hsl(var(--border))': '#cec9d9',
       };
-      return colorMapForJs[color] || '#3f3f46'; // fallback
+      return colorMapForJs[color] || '#cec9d9'; // fallback
     }
   }
   return color;

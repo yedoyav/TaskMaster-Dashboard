@@ -1,16 +1,26 @@
+
 import type {Metadata} from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist_Sans } from 'geist/font/sans';
+import { Lora, Fira_Code } from 'next/font/google';
 import './globals.css';
 import AppLayout from '@/components/layout/AppLayout';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const fontSans = Geist_Sans({
+  variable: '--font-sans',
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const fontSerif = Lora({
+  variable: '--font-serif',
   subsets: ['latin'],
+  display: 'swap',
+});
+
+const fontMono = Fira_Code({
+  variable: '--font-mono',
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '700'],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}>
         <AppLayout>
           {children}
         </AppLayout>
