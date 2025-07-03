@@ -46,6 +46,10 @@
     --shadow-lg: 1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 4px 6px 0px hsl(0 0% 0% / 0.06);
     --shadow-xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 8px 10px 0px hsl(0 0% 0% / 0.06);
     --shadow-2xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.15);
+    --status-green-hsl: 148 39% 49%;
+    --status-red-hsl: 0 84% 60%;
+    --status-yellow-hsl: 44 85% 63%;
+    --status-blue-hsl: 207 72% 58%;
   }
 
   .dark {
@@ -90,6 +94,10 @@
     --shadow-lg: 1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 4px 6px 0px hsl(0 0% 0% / 0.06);
     --shadow-xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 8px 10px 0px hsl(0 0% 0% / 0.06);
     --shadow-2xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.15);
+    --status-green-hsl: 148 39% 54%;
+    --status-red-hsl: 0 84% 66%;
+    --status-yellow-hsl: 44 85% 68%;
+    --status-blue-hsl: 207 72% 63%;
   }
 }
 

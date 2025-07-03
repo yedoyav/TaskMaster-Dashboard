@@ -32,11 +32,11 @@ export const END_OF_CURRENT_WEEK = getEndOfWeek(HOJE);
 export const STATUS_COLORS: Record<string, string> = {
   'Pendente': 'hsl(var(--primary))',
   'Em andamento': 'hsl(var(--accent))',
-  'Finalizado': 'var(--status-green)',
-  'Atrasada': 'var(--status-yellow)',
-  'Pausada': 'var(--status-yellow)',
+  'Finalizado': 'hsl(var(--status-green-hsl))',
+  'Atrasada': 'hsl(var(--status-yellow-hsl))',
+  'Pausada': 'hsl(var(--status-yellow-hsl))',
   'Descontinuada': 'hsl(var(--muted-foreground))',
-  'Outras Ativas': 'var(--status-blue)',
+  'Outras Ativas': 'hsl(var(--status-blue-hsl))',
   'default': 'hsl(var(--border))',
 };
 
@@ -50,31 +50,15 @@ export const PRIORITY_TEXT_CLASSES: Record<string, string> = {
 
 // Used for chart colors
 export const PRIORITY_CHART_COLORS: Record<string, string> = {
-  'Alta': 'hsl(var(--chart-5))', // Example: a distinct red/orange
-  'Média': 'hsl(var(--chart-4))', // Example: a distinct yellow
-  'Baixa': 'hsl(var(--chart-3))',   // Example: a distinct blue/green
+  'Alta': 'hsl(var(--chart-2))',
+  'Média': 'hsl(var(--chart-4))',
+  'Baixa': 'hsl(var(--chart-1))',
   'N/D': 'hsl(var(--muted))',
 };
 
 export function getStatusColor(statusKey?: string): string {
   if (!statusKey) return STATUS_COLORS['default'];
-  const color = STATUS_COLORS[statusKey] || STATUS_COLORS['default'];
-  if (color.startsWith('var(--')) {
-    const variableName = color.match(/var\((--[^)]+)\)/)?.[1];
-    if (variableName) {
-      const colorMapForJs: Record<string, string> = {
-        'hsl(var(--primary))': '#8a79ab',
-        'hsl(var(--accent))': '#e6a5b8',
-        'var(--status-green)': '#48BB78',
-        'var(--status-yellow)': '#ECC94B',
-        'var(--status-blue)': '#4299E1',
-        'hsl(var(--muted-foreground))': '#6b6880',
-        'hsl(var(--border))': '#cec9d9',
-      };
-      return colorMapForJs[color] || '#cec9d9'; // fallback
-    }
-  }
-  return color;
+  return STATUS_COLORS[statusKey] || STATUS_COLORS['default'];
 }
 
 export function getPriorityColorClass(priorityValue?: string | number): string {

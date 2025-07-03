@@ -61,10 +61,10 @@ export default {
   				border: 'var(--sidebar-border)',
   				ring: 'var(--sidebar-ring)'
   			},
-        'status-green': '#48BB78',
-        'status-red': '#F56565',
-        'status-yellow': '#ECC94B',
-        'status-blue': '#4299E1',
+        'status-green': 'hsl(var(--status-green-hsl))',
+        'status-red': 'hsl(var(--status-red-hsl))',
+        'status-yellow': 'hsl(var(--status-yellow-hsl))',
+        'status-blue': 'hsl(var(--status-blue-hsl))',
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
