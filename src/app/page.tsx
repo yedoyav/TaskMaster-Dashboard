@@ -18,7 +18,6 @@ import ProgressList from '@/components/dashboard/ProgressList';
 import TasksTable from '@/components/dashboard/TasksTable';
 import CriticalTaskModal from '@/components/dashboard/CriticalTaskModal';
 import PriorityDistributionChart from '@/components/dashboard/PriorityDistributionChart';
-import AiAnalysis from '@/components/dashboard/AiAnalysis';
 
 import type { Task } from '@/lib/constants';
 import { useTaskData, type UseTaskDataReturn } from '@/hooks/use-task-data';
@@ -117,8 +116,6 @@ function DashboardContent({ taskData }: { taskData: UseTaskDataReturn }) {
                     </div>
                 ) : (
                     <div className="space-y-8">
-                        <AiAnalysis filteredTasks={filteredTasks} />
-
                         <KpiDashboard kpiData={kpiData} onCriticalCardClick={handleCriticalCardClick} />
                     
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-8">

@@ -16,17 +16,11 @@
  */
 
 import {genkit} from 'genkit';
-import {googleAI} from 'genkit/googleai';
+// The googleAI plugin has been removed due to installation issues.
 
 export const ai = genkit({
   plugins: [
-    googleAI({
-      // The Gemini 1.5 API key is preferantially read from the
-      // GOOGLE_GENAI_API_KEY environment variable.
-      //
-      // You can also pass the API key to the plugin constructor:
-      // apiKey: 'your-api-key',
-    }),
+    // The Google AI plugin is disabled.
   ],
   // The AI-backed parts of this app are logged to the console.
   // You can also use OpenTelemetry to export traces to a supported provider.
