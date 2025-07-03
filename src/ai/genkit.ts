@@ -31,7 +31,6 @@ export const ai = genkit({
   // The AI-backed parts of this app are logged to the console.
   // You can also use OpenTelemetry to export traces to a supported provider.
   // For more information, see: https://genkit.dev/docs/observability
-  logLevel: 'debug',
   // Your flow's state is persisted to files in the .genkit/state directory.
   // Production apps should use a database instead.
   // For more information, see: https://genkit.dev/docs/plugins/prisma
