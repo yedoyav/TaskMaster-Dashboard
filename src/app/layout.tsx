@@ -1,14 +1,11 @@
 
 import type {Metadata} from 'next';
-import { Geist_Sans } from 'geist/font/sans';
+import { GeistSans } from 'geist/font/sans';
 import { Lora, Fira_Code } from 'next/font/google';
 import './globals.css';
 import AppLayout from '@/components/layout/AppLayout';
 
-const fontSans = Geist_Sans({
-  variable: '--font-sans',
-  subsets: ['latin'],
-});
+const fontSans = GeistSans;
 
 const fontSerif = Lora({
   variable: '--font-serif',
