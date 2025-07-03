@@ -85,39 +85,48 @@ export function getWeekIdentifier(date?: Date | null): string | null {
   return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
 
-function normalizeBlingStatus(blingStatus: string): string {
-    const s = blingStatus.toLowerCase();
-    if (s.includes('atendido')) return 'Finalizado';
-    if (s.includes('cancelado')) return 'Descontinuada';
-    if (s.includes('andamento')) return 'Em andamento';
-    if (s.includes('em aberto') || s.includes('pendente')) return 'Pendente';
-    return 'Pendente'; // Default
-}
-
 export function processRow(row: Record<string, any>): Task {
   const newRow: Partial<Task> & { [key: string]: any } = {};
 
   try {
-    // Map Bling columns to Task interface
-    newRow['ID da tarefa'] = parseInt(String(row['ID']), 10);
-    newRow['Tarefa'] = row['Descrição'] || 'Tarefa sem nome';
-    newRow['Status'] = row['Situação'] ? normalizeBlingStatus(row['Situação']) : 'N/D';
-    newRow['Responsável'] = row['Vendedor'] || 'N/A';
-    newRow['Estratégia'] = row['Loja virtual'] || 'N/A';
-    newRow['Prioridade'] = row['Prioridade'] ? parseInt(String(row['Prioridade']), 10) : 3; // Default to Baixa
+    // Map CSV columns to Task interface, with type parsing
+    newRow['ID da tarefa'] = parseInt(String(row['ID da tarefa']), 10);
+    newRow['Tarefa'] = row['Tarefa'] || 'Tarefa sem nome';
+    newRow['Status'] = row['Status'] || 'N/D';
+    newRow['Responsável'] = row['Responsável'] || 'N/A';
+    newRow['Estratégia'] = row['Estratégia'] || 'N/A';
     
-    newRow['Data de criação'] = parseDate(String(row['Data']));
-    newRow['Prazo'] = null; // Bling default CSV doesn't have a deadline
-    newRow['Data de finalização'] = newRow['Status'] === 'Finalizado' ? parseDate(String(row['Data'])) : null; // Assume completion date is order date for 'Atendido'
-    newRow['Última atualização'] = newRow['Data de finalização'] || newRow['Data de criação'];
+    // Handle 'Descontinuada' column to override status
+    if (String(row['Descontinuada']).toLowerCase() === 'sim') {
+        newRow['Status'] = 'Descontinuada';
+    }
+    
+    const priority = parseInt(String(row['Prioridade']), 10);
+    newRow['Prioridade'] = isNaN(priority) ? undefined : priority;
+    
+    const carga = parseFloat(String(row['Carga de Trabalho']).replace(',', '.'));
+    newRow['Carga de Trabalho'] = isNaN(carga) ? 0 : carga;
 
+    newRow['Data de criação'] = parseDate(String(row['Data de criação']));
+    newRow['Última atualização'] = parseDate(String(row['Última atualização']));
+    newRow['Data de início'] = parseDate(String(row['Data de início']));
+    newRow['Prazo'] = parseDate(String(row['Prazo']));
+    newRow['Data de finalização'] = parseDate(String(row['Data de finalização']));
 
-    // Fields not in Bling default export, set to defaults
-    newRow['Carga de Trabalho'] = 0;
-    newRow['Tempo de Tracking (Horas)'] = 0;
-    newRow['Pausada'] = 'Não';
-    newRow['Pendente com'] = '';
-    newRow['Etapa'] = 'Geral'; // Default Etapa
+    newRow['Tempo de Tracking'] = row['Tempo de Tracking'];
+    newRow['Tempo de Tracking (Horas)'] = convertTrackingTimeToHours(row['Tempo de Tracking']);
+    
+    newRow['Pausada'] = row['Pausada'] || 'Não';
+    newRow['Pendente com'] = row['Pendente com'] || '';
+    newRow['Etapa'] = row['Etapa'] || 'Não definida';
+    newRow['urlApp'] = row['urlApp'];
+    newRow['urlCliente'] = row['urlCliente'];
+
+    // Check for required fields after mapping
+    if (isNaN(newRow['ID da tarefa'])) {
+        console.error('ID da tarefa inválido ou ausente:', row);
+        return { ...newRow, _error: true } as Task;
+    }
 
     // Calculated fields
     newRow.AtrasadaCalculado = !!(newRow.Prazo && newRow.Prazo < HOJE && newRow.Status !== 'Finalizado' && newRow.Status !== 'Descontinuada');
@@ -147,7 +156,7 @@ export function processRow(row: Record<string, any>): Task {
 
     return newRow as Task;
   } catch (error) {
-    console.error('Erro ao processar linha do Bling:', row, error);
+    console.error('Erro ao processar linha do CSV:', row, error);
     return { ...newRow, _error: true } as Task;
   }
 }

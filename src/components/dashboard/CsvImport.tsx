@@ -46,7 +46,7 @@ export default function CsvImport({ onDataLoaded }: CsvImportProps) {
           return;
         }
 
-        const requiredHeaders = ['ID', 'Descrição', 'Situação', 'Data'];
+        const requiredHeaders = ['ID da tarefa', 'Tarefa', 'Status'];
         const csvHeaders = results.meta.fields;
 
         if (!csvHeaders) {
@@ -59,7 +59,7 @@ export default function CsvImport({ onDataLoaded }: CsvImportProps) {
 
         const missingHeaders = requiredHeaders.filter(header => !lowerCaseCsvHeaders.includes(header.toLowerCase()));
         if (missingHeaders.length > 0) {
-          setError(`Erro na estrutura do CSV. Colunas obrigatórias do Bling faltando: ${missingHeaders.join(', ')}. Verifique se o arquivo é um export de Pedidos.`);
+          setError(`Erro na estrutura do CSV. Colunas obrigatórias faltando: ${missingHeaders.join(', ')}. Verifique se o arquivo é um export de tarefas da YAV.`);
           setFileName(null);
           return;
         }
@@ -131,7 +131,7 @@ export default function CsvImport({ onDataLoaded }: CsvImportProps) {
               <>
                 <UploadCloud className="w-12 h-12 text-accent/80 group-hover:text-accent mb-3 transition-colors" />
                 <p className="text-lg font-medium text-foreground group-hover:text-accent transition-colors">Clique para carregar ou arraste seu CSV</p>
-                <p className="text-sm text-muted-foreground mt-1">Export de Pedidos do Bling (.csv)</p>
+                <p className="text-sm text-muted-foreground mt-1">Export de tarefas da YAV Digital (.csv)</p>
               </>
             )}
             <Input type="file" id="csvFile" accept=".csv" className="hidden" onChange={handleFileChange} disabled={isLoading || (!!fileName && !error)} />
@@ -140,7 +140,7 @@ export default function CsvImport({ onDataLoaded }: CsvImportProps) {
 
         {!isLoading && !fileName && !error && (
             <p className="text-xs text-muted-foreground/70 mt-8 text-center">
-                Use o arquivo de exportação de pedidos do Bling (Modelo Padrão).
+                Use o arquivo de exportação de tarefas da sua ferramenta de gestão.
             </p>
         )}
       </div>
