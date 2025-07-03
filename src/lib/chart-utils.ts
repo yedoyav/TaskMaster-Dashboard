@@ -130,7 +130,7 @@ export function processEtapaDistributionData(tasks: Task[]): EtapaDistributionCh
     datasets: [{
       label: 'Nº de Tarefas',
       data,
-      backgroundColor: 'hsl(var(--primary))',
+      backgroundColor: 'var(--primary)',
       borderRadius: 4,
     }]
   };
@@ -167,8 +167,8 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
     return {
       labels: [],
       datasets: [
-        { label: 'Concluídas (Acum.)', data: [], borderColor: 'hsl(var(--chart-3))', backgroundColor: 'hsla(var(--chart-3)/0.1)', fill: true, tension: 0.3 },
-        { label: 'Não Concluídas (Acum.)', data: [], borderColor: 'hsl(var(--chart-1))', backgroundColor: 'hsla(var(--chart-1)/0.1)', fill: true, tension: 0.3 }
+        { label: 'Concluídas (Acum.)', data: [], borderColor: 'var(--chart-3)', backgroundColor: 'var(--chart-3)', fill: true, tension: 0.3 },
+        { label: 'Não Concluídas (Acum.)', data: [], borderColor: 'var(--chart-1)', backgroundColor: 'var(--chart-1)', fill: true, tension: 0.3 }
       ]
     };
   }
@@ -206,22 +206,22 @@ export function processWeeklyTrendData(allTasks: Task[]): WeeklyTrendChartData {
       {
         label: 'Concluídas (Acum.)',
         data: completedTrend,
-        borderColor: 'hsl(var(--chart-3))',
-        backgroundColor: 'hsla(var(--chart-3), 0.1)',
+        borderColor: 'var(--chart-3)',
+        backgroundColor: 'var(--chart-3)',
         fill: true,
         tension: 0.3,
         pointRadius: 2,
-        pointBackgroundColor: 'hsl(var(--chart-3))',
+        pointBackgroundColor: 'var(--chart-3)',
       },
       {
         label: 'Não Concluídas (Acum.)',
         data: activeTrend,
-        borderColor: 'hsl(var(--chart-1))',
-        backgroundColor: 'hsla(var(--chart-1), 0.1)',
+        borderColor: 'var(--chart-1)',
+        backgroundColor: 'var(--chart-1)',
         fill: true,
         tension: 0.3,
         pointRadius: 2,
-        pointBackgroundColor: 'hsl(var(--chart-1))',
+        pointBackgroundColor: 'var(--chart-1)',
       }
     ]
   };
@@ -328,18 +328,18 @@ export function processPriorityDistributionData(tasks: Task[]): PriorityDistribu
 export const barChartConfig = { // For EtapaDistributionChart
   tasks: { // Corresponds to dataKey in BarChart
     label: "Nº de Tarefas",
-    color: "hsl(var(--primary))",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
 export const lineChartConfig = { // For WeeklyConclusionTrendChart
   completed: {
     label: "Concluídas (Acum.)",
-    color: "hsl(var(--chart-3))",
+    color: "var(--chart-3)",
   },
   active: { // "active" here means "Não Concluídas (Acum.)"
     label: "Não Concluídas (Acum.)",
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 

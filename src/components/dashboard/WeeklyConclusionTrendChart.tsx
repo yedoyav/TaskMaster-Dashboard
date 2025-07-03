@@ -77,8 +77,8 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
                     <stop offset="95%" stopColor="var(--color-active)" stopOpacity={0.05}/>
                   </linearGradient>
                 </defs>
-                <Area type="monotone" dataKey="completed" stroke="var(--color-completed)" fill="url(#fillCompletedTrend)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-completed)'}} activeDot={{r:6, strokeWidth: 1, stroke: 'hsl(var(--background))'}} />
-                <Area type="monotone" dataKey="active" stroke="var(--color-active)" fill="url(#fillActiveTrend)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-active)'}} activeDot={{r:6, strokeWidth: 1, stroke: 'hsl(var(--background))'}}/>
+                <Area type="monotone" dataKey="completed" stroke="var(--color-completed)" fill="url(#fillCompletedTrend)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-completed)'}} activeDot={{r:6, strokeWidth: 1, stroke: 'var(--background)'}} />
+                <Area type="monotone" dataKey="active" stroke="var(--color-active)" fill="url(#fillActiveTrend)" strokeWidth={2} dot={{ r:3, fill: 'var(--color-active)'}} activeDot={{r:6, strokeWidth: 1, stroke: 'var(--background)'}}/>
               </AreaChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -98,4 +98,3 @@ export default function WeeklyConclusionTrendChart({ data }: WeeklyConclusionTre
     </Card>
   );
 }
-

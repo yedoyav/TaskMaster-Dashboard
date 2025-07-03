@@ -1,3 +1,4 @@
+
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -8,7 +9,7 @@ import type { EtapaDistributionChartData } from '@/lib/chart-utils';
 const rechartsChartConfig: ChartConfig = {
   tasks: {
     label: "Nº de Tarefas",
-    color: "hsl(var(--primary))",
+    color: "var(--primary)",
   },
 };
 
