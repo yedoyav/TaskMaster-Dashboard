@@ -30,14 +30,14 @@ export const START_OF_CURRENT_WEEK = getStartOfWeek(HOJE);
 export const END_OF_CURRENT_WEEK = getEndOfWeek(HOJE);
 
 export const STATUS_COLORS: Record<string, string> = {
-  'Pendente': 'hsl(var(--chart-1))',
-  'Em andamento': 'hsl(var(--chart-2))',
+  'Pendente': 'var(--chart-1)',
+  'Em andamento': 'var(--chart-2)',
   'Finalizado': 'hsl(var(--status-green-hsl))',
   'Atrasada': 'hsl(var(--status-yellow-hsl))',
   'Pausada': 'hsl(var(--status-yellow-hsl))',
-  'Descontinuada': 'hsl(var(--muted-foreground))',
+  'Descontinuada': 'var(--muted-foreground)',
   'Outras Ativas': 'hsl(var(--status-blue-hsl))',
-  'default': 'hsl(var(--border))',
+  'default': 'var(--border)',
 };
 
 // Used for text color in tables/lists
@@ -50,10 +50,10 @@ export const PRIORITY_TEXT_CLASSES: Record<string, string> = {
 
 // Used for chart colors
 export const PRIORITY_CHART_COLORS: Record<string, string> = {
-  'Alta': 'hsl(var(--chart-2))',
-  'Média': 'hsl(var(--chart-4))',
-  'Baixa': 'hsl(var(--chart-1))',
-  'N/D': 'hsl(var(--muted))',
+  'Alta': 'var(--chart-2)',
+  'Média': 'var(--chart-4)',
+  'Baixa': 'var(--chart-1)',
+  'N/D': 'var(--muted)',
 };
 
 export function getStatusColor(statusKey?: string): string {

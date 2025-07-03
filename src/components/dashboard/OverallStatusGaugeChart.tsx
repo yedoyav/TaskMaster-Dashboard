@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -71,7 +72,7 @@ export default function OverallStatusGaugeChart({ data }: OverallStatusGaugeChar
               </PieChart>
             </ChartContainer>
              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-20px] sm:mt-[-25px]">
-                <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                <p className="text-3xl sm:text-4xl font-bold text-primary">
                   {noDataPlaceholder ? "N/D" : `${progressPercentage.toFixed(0)}%`}
                 </p>
                 {!noDataPlaceholder && <p className="text-sm text-muted-foreground mt-1">Concluído</p>}
@@ -82,7 +83,7 @@ export default function OverallStatusGaugeChart({ data }: OverallStatusGaugeChar
           {summaryData.map((item) => (
             (item.key === 'TotalTarefas' || item.count > 0 || (data.summaryData[0].count > 0 && item.count ===0)) && !noDataPlaceholder ? (
               <div key={item.key} className="flex flex-col items-center justify-center text-center p-1.5 rounded-md bg-background/50 hover:bg-background transition-colors">
-                <p className="text-lg sm:text-xl font-bold" style={{ color: item.isBold ? 'hsl(var(--foreground))' : item.color }}>
+                <p className="text-lg sm:text-xl font-bold" style={{ color: item.isBold ? 'var(--foreground)' : item.color }}>
                   {item.count}
                 </p>
                 <p className="text-2xs sm:text-xs text-muted-foreground whitespace-nowrap truncate max-w-[60px] sm:max-w-none">{item.label}</p>
